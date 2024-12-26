@@ -32,7 +32,7 @@ const TabsNavigator = () => {
       screenOptions={{
         tabBarShowLabel: false,
       }}
-      // tabBar={(props) => <CustomBottomTabs {...props} />}
+      tabBar={(props) => <CustomBottomTabs {...props} />}
     >
       <TabsStack.Screen
         name="Home"
@@ -44,6 +44,7 @@ const TabsNavigator = () => {
           },
         }}
       />
+      
       <TabsStack.Screen
         name="Query"
         component={QueryScreen}
