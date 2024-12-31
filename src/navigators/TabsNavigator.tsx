@@ -11,6 +11,7 @@ import { RootStackScreenProps } from "./RootNavigator";
 import CustomBottomTabs from "../components/CustomBottomTabs";
 import QueryScreen from "../screens/QueryScreen";
 import BrandScreen from "../screens/BrandScreen";
+import Profile from "../screens/ProfileScreen";
 
 export type TabsStackParamList = {
   Home: undefined;
@@ -67,8 +68,9 @@ const TabsNavigator = () => {
       />
       <TabsStack.Screen
         name="Profile"
-        component={Example}
+        component={Profile}
         options={{
+          headerShown: false,
           tabBarIcon(props) {
             return <Icons name="person" {...props} />;
           },
