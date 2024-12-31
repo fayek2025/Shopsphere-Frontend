@@ -10,6 +10,8 @@ import CartScreen from '../screens/CartScreen'
 import BrandScreen from '../screens/BrandScreen'
 import BrandScreenDetails from '../screens/BrandDetailScreens'
 import confirmScreen from '../screens/ConfirmScreen'
+import Login from '../screens/login'
+import signUp from '../screens/signUp'
 
 export type RootStackParamList = {
     TabsStack: NavigatorScreenParams<TabsStackParamList>;
@@ -30,6 +32,8 @@ export type RootStackParamList = {
     };
 
     confirmScreen: undefined;
+    Login : undefined;
+    signUp: undefined;
    
     
 }
@@ -44,6 +48,7 @@ export type RootStackScreenProps <T extends keyof RootStackParamList> = NativeSt
 const RootNavigator = () => {
   return (
     <RootStack.Navigator>
+        
         <RootStack.Screen name="TabsStack" component={TabsNavigator} options={{headerShown :false}} />   
         <RootStack.Screen name="Details" component={DetailsScreen} 
         options={{headerShown : false}}
@@ -51,6 +56,7 @@ const RootNavigator = () => {
         />
          <RootStack.Screen name="CartScreen" component={CartScreen} 
         options={{headerShown : false}}
+        
         
         
         />
@@ -64,7 +70,8 @@ const RootNavigator = () => {
         options={{headerShown : false}}
         
         /> 
-       
+       <RootStack.Screen name="Login" component={Login} options={{headerShown :false}} />
+       <RootStack.Screen name="signUp" component={signUp} options={{headerShown :false}} />
 
     </RootStack.Navigator>
   )

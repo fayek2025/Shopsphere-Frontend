@@ -15,6 +15,8 @@ import {
 
 import icons from "../Constants/icons";
 import { settings } from "../Constants/data";
+import { RootStackScreenProps } from "../navigators/RootNavigator";
+import { TabsStackScreenProps } from "../navigators/TabsNavigator";
 
 const avatar = "https://images.unsplash.com/photo-1521577352947-9bb58764b69a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=986&q=80"
 
@@ -42,7 +44,9 @@ const SettingsItem = ({
   </TouchableOpacity>
 );
 
-const Profile = () => {
+
+
+const Profile = ({navigation} : TabsStackScreenProps<"Profile">) => {
 //   const { user, refetch } = useGlobalContext();
 
 //   const handleLogout = async () => {
@@ -101,7 +105,7 @@ const Profile = () => {
             title="Logout"
             textStyle={styles.logoutText}
             showArrow={false}
-            onPress={() => Alert.alert("Logout", "Are you sure you want to logout?")}
+            onPress={() => navigation.navigate("Login")}
           />
         </View>
       </ScrollView>
