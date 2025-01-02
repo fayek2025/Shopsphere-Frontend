@@ -12,15 +12,31 @@ import {
 } from "react-native";
 import images from "../Constants/images";
 import { RootStackScreenProps } from "../navigators/RootNavigator";
+import { signupUser } from "../api";
 
 const SignUp = ({ navigation }: RootStackScreenProps<"signUp">) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignUp = () => {
-    Alert.alert("Account created!", `Welcome, ${username}`);
+  const handleSignup = () => {
+    signupUser(
+      { username, password, email }, // Pass signup credentials
+      {
+        onSuccess: () => {
+          // Navigate to home or another screen after successful signup
+          console.log('Signup successful!');
+          navigation.navigate('TabsStack', { screen: 'Home' });
+        },
+        onError: (error) => {
+          // Handle error
+          Alert.alert('Signup Failed', 'Please check your details and try again.');
+        },
+      }
+    );
   };
+  
+    
 
   const handleSignIn = () => {
     navigation.navigate("Login"); // Ensure "Login" is a registered route in your navigation stack
@@ -29,18 +45,14 @@ const SignUp = ({ navigation }: RootStackScreenProps<"signUp">) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollView}>
-        <Image
-          // source={require(images.onboarding)}
-          style={styles.image}
-          resizeMode="contain"
-        />
+        
 
         <View style={styles.content}>
           <Text style={styles.welcomeText}>Create Your Account</Text>
 
           <Text style={styles.headingText}>
-            Let's Get Started With {"\n"}
-            <Text style={styles.highlightText}>Your New Home</Text>
+            Start Your Journey With {"\n"}
+            <Text style={styles.highlightText}>ShopSphere</Text>
           </Text>
 
           <TextInput
@@ -69,7 +81,7 @@ const SignUp = ({ navigation }: RootStackScreenProps<"signUp">) => {
             secureTextEntry
           />
 
-          <TouchableOpacity onPress={handleSignUp} style={styles.button}>
+          <TouchableOpacity onPress={handleSignup} style={styles.button}>
             <View style={styles.buttonContent}>
               <Text style={styles.buttonText}>Sign Up</Text>
             </View>
@@ -88,6 +100,7 @@ const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: "white",
     flex: 1,
+    paddingVertical: 40
   },
   scrollView: {
     height: "100%",
@@ -114,7 +127,8 @@ const styles = StyleSheet.create({
     marginTop: 8, // mt-2
   },
   highlightText: {
-    color: "#FF6B6B", // Tailwind's text-primary-300
+    color: "black",
+    fontWeight: "800" // Tailwind's text-primary-300
   },
   input: {
     borderWidth: 1,
@@ -128,7 +142,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   button: {
-    backgroundColor: "#FF6B6B", // Tailwind's text-primary-300
+    backgroundColor: "black", // Tailwind's text-primary-300
     borderRadius: 8,
     width: "100%",
     paddingVertical: 16, // py-4
@@ -151,7 +165,8 @@ const styles = StyleSheet.create({
   signInText: {
     fontSize: 16,
     fontFamily: "Rubik",
-    color: "#FF6B6B",
+    color: "black",
+    fontWeight: "800"
   },
 });
 

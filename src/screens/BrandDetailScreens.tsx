@@ -182,6 +182,7 @@ const BrandDetailScreens = ({
         <TouchableOpacity
         onPress={() => {
                 navigation.navigate('Details', {
+                    id: item.product_id,
                     imageUrl: item.imageUrl,
                     title: item.title,
                     price: item.price.toString(),
@@ -206,7 +207,7 @@ const BrandDetailScreens = ({
            padding: 12,
         }}
         >
-            <Image source={{uri: item.imageUrl}} 
+            <Image source={{uri: item.thumbnail}} 
             style = {[StyleSheet.absoluteFillObject , {
                 borderRadius: 24,
                 paddingHorizontal: 12,
@@ -318,7 +319,7 @@ const BrandDetailScreens = ({
                       numberOfLines={1}
 
                     >
-                      price
+                      ${item.price}
                     </Text>
 
                     <TouchableOpacity

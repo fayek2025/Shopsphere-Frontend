@@ -1,9 +1,13 @@
 import { Todo } from "../entities/Todo";
 import { Brand } from "../entities/Todo"; // Fix the incorrect import
 import { Product } from "../entities/Todo";
-import { BrandIDProduct } from "../entities/Todo";
+import { BrandIDProduct, LoginCredentials , LoginResponse, SignupCredentials , SignupResponse } from "../entities/Todo";
+import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 // Base URL for the API
-const BASE_URL = 'https://57ec-2a09-bac1-b20-518-00-19b-15a.ngrok-free.app';
+const BASE_URL = 'https://cf8c-2a09-bac5-487-25b9-00-3c2-31.ngrok-free.app';
 
 /**
  * Fetches all products (todos) from the API.
@@ -125,3 +129,106 @@ export const addTodo = async (todo: Pick<Todo, "title">): Promise<Todo> => {
     throw error;
   }
 };
+
+
+
+//Authentication
+
+const loginUser = async (credentials: LoginCredentials): Promise<LoginResponse> => {
+  console.log("Attempting login with credentials:", credentials);
+
+  if (!credentials.username || !credentials.password) {
+    throw new Error("Both username and password are required.");
+  }
+
+  try {
+    const formData = new URLSearchParams();
+    formData.append("username", credentials.username);
+    formData.append("password", credentials.password);
+
+    const response = await axios.post<LoginResponse>(`${BASE_URL}/auth/login`, formData, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+
+    console.log("Login response:", response.data);
+    return response.data;
+
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      console.error("Server returned error:", error.response?.data);
+      throw new Error(error.response?.data?.detail || "Login failed");
+    }
+    throw error;
+  }
+};
+
+
+
+
+
+
+
+// Custom hook for login
+export const useLogin = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<LoginResponse, Error, LoginCredentials>({
+    mutationFn: loginUser,
+    onSuccess: async (data: LoginResponse) => {
+      try {
+        // Store tokens securely in AsyncStorage
+        await AsyncStorage.setItem('access_token', data.access_token);
+        await AsyncStorage.setItem('refresh_token', data.refresh_token);
+
+        console.log("Tokens saved successfully");
+
+        // Optionally, invalidate relevant queries
+        queryClient.invalidateQueries(['user']);
+      } catch (error) {
+        console.error("Failed to store tokens:", error);
+      }
+    },
+    onError: (error: Error) => {
+      console.error("Login failed:", error.message);
+    },
+  });
+};
+
+
+
+
+export const signupUser = async (
+  credentials: SignupCredentials
+): Promise<SignupResponse> => {
+  console.log("Attempting signup with credentials:", credentials);
+
+  if (!credentials.username || !credentials.password || !credentials.email) {
+    throw new Error("Username, password, and email are required.");
+  }
+
+  try {
+    const formData = new URLSearchParams();
+    formData.append("username", credentials.username);
+    formData.append("password", credentials.password);
+    formData.append("email", credentials.email);
+
+    const response = await axios.post<SignupResponse>(`${BASE_URL}/auth/signup`, formData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    console.log("Signup response:", response.data);
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      console.error("Server returned error:", error.response?.data);
+      throw new Error(error.response?.data?.detail || "Signup failed");
+    }
+    throw error;
+  }
+};
+
+

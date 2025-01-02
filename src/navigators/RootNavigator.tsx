@@ -48,6 +48,8 @@ export type RootStackScreenProps <T extends keyof RootStackParamList> = NativeSt
 const RootNavigator = () => {
   return (
     <RootStack.Navigator>
+    <RootStack.Screen name="Login" component={Login} options={{headerShown :false}} />
+    <RootStack.Screen name="signUp" component={signUp} options={{headerShown :false}} />
         
         <RootStack.Screen name="TabsStack" component={TabsNavigator} options={{headerShown :false}} />   
         <RootStack.Screen name="Details" component={DetailsScreen} 
@@ -70,8 +72,7 @@ const RootNavigator = () => {
         options={{headerShown : false}}
         
         /> 
-       <RootStack.Screen name="Login" component={Login} options={{headerShown :false}} />
-       <RootStack.Screen name="signUp" component={signUp} options={{headerShown :false}} />
+       
 
     </RootStack.Navigator>
   )

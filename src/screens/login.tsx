@@ -14,16 +14,39 @@ import images from "../Constants/images";
 import icons from "../Constants/icons";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackScreenProps } from "../navigators/RootNavigator";
+import { useLogin } from "../api";
+
+
+
 const avatar = "https://images.unsplash.com/photo-1521577352947-9bb58764b69a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=986&q=80"
 
 
 const Login = ({ navigation }: RootStackScreenProps<"Login">) => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const { mutate: login, error } = useLogin();
 
   const handleLogin = () => {
-    Alert.alert(`Logging in as ${username}`);
+    login(
+      { username, password },
+      {
+        onSuccess: () => {
+          // Navigate to home screen after successful login
+          console.log('Login successful!');
+          navigation.navigate('TabsStack', { screen: 'Home' });
+        },
+        onError: (error) => {
+          // Handle error
+          Alert.alert('Login Failed', 'Please check your credentials and try again.');
+        },
+      }
+    );
   };
+
+  // const handleLogin = () =>
+  // {
+  //   navigation.navigate('TabsStack', { screen: 'Home' });
+  // }
 
   const handleSignUp = () => {
     navigation.navigate("signUp"); // Ensure "SignUp" is a registered route in your navigation stack
@@ -32,18 +55,14 @@ const Login = ({ navigation }: RootStackScreenProps<"Login">) => {
   return (
     <SafeAreaView style={styles.safeArea}>
   <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-    <Image
-      source={{uri : avatar}}
-      style={styles.image}
-      resizeMode="contain"
-    />
+    
 
     <View style={styles.content}>
-      <Text style={styles.welcomeText}>Welcome To Real Scout</Text>
+      <Text style={styles.welcomeText}>Welcome To ShopSphere</Text>
 
       <Text style={styles.headingText}>
-        Let's Get You Closer To {"\n"}
-        <Text style={styles.highlightText}>Your Ideal Home</Text>
+        Discover  {"\n"}
+        <Text style={styles.highlightText}>Your Inner Desire</Text>
       </Text>
 
       <TextInput
@@ -96,6 +115,7 @@ const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: "white",
     flex: 1,
+    paddingVertical: 40
   },
   scrollView: {
     height: "100%",
@@ -122,7 +142,8 @@ const styles = StyleSheet.create({
     marginTop: 8, // mt-2
   },
   highlightText: {
-    color: "#FF6B6B", // Tailwind's text-primary-300
+    color: "black",
+    fontWeight: "800" // Tailwind's text-primary-300
   },
   input: {
     borderWidth: 1,
@@ -136,7 +157,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   button: {
-    backgroundColor: "#FF6B6B", // Tailwind's text-primary-300
+    backgroundColor: "black", // Tailwind's text-primary-300
     borderRadius: 8,
     width: "100%",
     paddingVertical: 16, // py-4
@@ -146,6 +167,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    fontWeight: "bold",
   },
   buttonText: {
     fontSize: 18, // text-lg
@@ -186,7 +208,9 @@ const styles = StyleSheet.create({
   signUpText: {
     fontSize: 16,
     fontFamily: "Rubik",
-    color: "#FF6B6B",
+    color: "black",
+    fontWeight: "800",
+
   },
 });
 
