@@ -166,10 +166,6 @@ const loginUser = async (credentials: LoginCredentials): Promise<LoginResponse> 
 
 
 
-
-
-
-
 // Custom hook for login
 export const useLogin = () => {
   const queryClient = useQueryClient();
@@ -199,36 +195,84 @@ export const useLogin = () => {
 
 
 
-export const signupUser = async (
-  credentials: SignupCredentials
-): Promise<SignupResponse> => {
+const signupUser = async (credentials: SignupCredentials): Promise<SignupResponse> => {
   console.log("Attempting signup with credentials:", credentials);
 
+  // Validate required fields
   if (!credentials.username || !credentials.password || !credentials.email) {
     throw new Error("Username, password, and email are required.");
   }
 
   try {
-    const formData = new URLSearchParams();
-    formData.append("username", credentials.username);
-    formData.append("password", credentials.password);
-    formData.append("email", credentials.email);
+    // Construct the payload as a JSON object
+    const payload = {
+      username: credentials.username,
+      email: credentials.email,
+      password: credentials.password,
+      full_name: credentials.full_name || "", // Optional field
+    };
 
-    const response = await axios.post<SignupResponse>(`${BASE_URL}/auth/signup`, formData, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    console.log("Payload:", JSON.stringify(payload));
+
+    // Send the JSON payload with appropriate headers
+    const response = await axios.post<SignupResponse>(
+      `${BASE_URL}/auth/signup`,
+      payload, // JSON object
+      {
+        headers: {
+          "Content-Type": "application/json", // Correct header for JSON
+        },
+      }
+    );
 
     console.log("Signup response:", response.data);
-    return response.data;
+    return response.data; // Return the response data
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
       console.error("Server returned error:", error.response?.data);
-      throw new Error(error.response?.data?.detail || "Signup failed");
+
+      // Extract meaningful error message from the response
+      const serverError = error.response?.data?.detail;
+      const errorMessage = Array.isArray(serverError)
+        ? serverError.map((err: any) => err.msg || err).join(", ")
+        : serverError || "Signup failed";
+
+      throw new Error(errorMessage);
     }
-    throw error;
+
+    throw new Error("An unexpected error occurred.");
   }
+};
+
+// Custom hook for signup
+export const useSignup = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<SignupResponse, Error, SignupCredentials>({
+    mutationFn: signupUser,
+    onSuccess: async (data: SignupResponse) => {
+      try {
+        // Extract user details from the response
+        const { full_name, username, email, id } = data.data;
+
+        // Store user details securely in AsyncStorage
+        await AsyncStorage.setItem('user_id', id.toString());
+        await AsyncStorage.setItem('full_name', full_name);
+        await AsyncStorage.setItem('username', username);
+        await AsyncStorage.setItem('email', email);
+
+        console.log("User details saved successfully");
+
+        // Optionally, invalidate relevant queries
+        queryClient.invalidateQueries(['user']);
+      } catch (error) {
+        console.error("Failed to store user details:", error);
+      }
+    },
+    onError: (error: Error) => {
+      console.error("Signup failed:", error.message);
+    },
+  });
 };
 
 

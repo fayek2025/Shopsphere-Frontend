@@ -12,6 +12,7 @@ import BrandScreenDetails from '../screens/BrandDetailScreens'
 import confirmScreen from '../screens/ConfirmScreen'
 import Login from '../screens/login'
 import signUp from '../screens/signUp'
+import OnboardingScreen from '../screens/OnboardingScreen'
 
 export type RootStackParamList = {
     TabsStack: NavigatorScreenParams<TabsStackParamList>;
@@ -34,6 +35,7 @@ export type RootStackParamList = {
     confirmScreen: undefined;
     Login : undefined;
     signUp: undefined;
+    onBoarding : undefined;
    
     
 }
@@ -48,6 +50,10 @@ export type RootStackScreenProps <T extends keyof RootStackParamList> = NativeSt
 const RootNavigator = () => {
   return (
     <RootStack.Navigator>
+      <RootStack.Screen name="onBoarding" component={OnboardingScreen}
+        options={{headerShown : false}}
+        
+        />
     <RootStack.Screen name="Login" component={Login} options={{headerShown :false}} />
     <RootStack.Screen name="signUp" component={signUp} options={{headerShown :false}} />
         
@@ -72,6 +78,8 @@ const RootNavigator = () => {
         options={{headerShown : false}}
         
         /> 
+
+
        
 
     </RootStack.Navigator>

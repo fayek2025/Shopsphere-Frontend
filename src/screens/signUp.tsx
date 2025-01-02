@@ -12,30 +12,27 @@ import {
 } from "react-native";
 import images from "../Constants/images";
 import { RootStackScreenProps } from "../navigators/RootNavigator";
-import { signupUser } from "../api";
+import { useSignup } from "../api";
 
 const SignUp = ({ navigation }: RootStackScreenProps<"signUp">) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const handleSignup = () => {
-    signupUser(
-      { username, password, email }, // Pass signup credentials
-      {
-        onSuccess: () => {
-          // Navigate to home or another screen after successful signup
-          console.log('Signup successful!');
-          navigation.navigate('TabsStack', { screen: 'Home' });
-        },
-        onError: (error) => {
-          // Handle error
-          Alert.alert('Signup Failed', 'Please check your details and try again.');
-        },
-      }
-    );
-  };
+  const [full_name, setFull_name] = useState("");
+  const { mutate: signupUser, error } = useSignup();
+  const handleSignup = async () => {
+    try {
+      // Call signupUser with credentials
+      await signupUser({ username,  email, password });
   
+      // On success, navigate to the desired screen
+      console.log('Signup successful!');
+      navigation.navigate('TabsStack', { screen: 'Home' });
+    } catch (error: any) {
+      // On error, show an alert
+      Alert.alert('Signup Failed', 'Please check your details and try again.');
+    }
+  };
     
 
   const handleSignIn = () => {
@@ -54,6 +51,14 @@ const SignUp = ({ navigation }: RootStackScreenProps<"signUp">) => {
             Start Your Journey With {"\n"}
             <Text style={styles.highlightText}>ShopSphere</Text>
           </Text>
+
+          <TextInput
+            style={styles.input}
+            placeholder="Full Name"
+            placeholderTextColor="#A0A0A0"
+            value={full_name}
+            onChangeText={setFull_name}
+          />
 
           <TextInput
             style={styles.input}

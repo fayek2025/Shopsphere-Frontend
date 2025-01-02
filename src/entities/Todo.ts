@@ -39,15 +39,18 @@ export interface Todo {
   }
 
   export interface SignupCredentials {
+    full_name?: string;
     username: string;
+    
+    email: string;
     password: string;
-    email: string; // Assuming email is also required for signup
+     // Assuming email is also required for signup
   }
   
   export interface SignupResponse {
-    access_token: string;
-    refresh_token: string;
-    token_type: string;
-    expires_in: number;
-    refresh_token_expires_in: number;
+    full_name : string;
+    username: string;
+    
+    email: string;
+    password: string;
   }
