@@ -6,9 +6,11 @@ import Icons from '@expo/vector-icons/MaterialIcons'
 import { useTheme } from '@react-navigation/native'
 import { StyleSheet } from 'react-native'
 import { StatusBar } from 'react-native'
-import { fetchProductById } from '../api'
+import { fetchProductById , useCreateCart } from '../api'
 import BottomSheet, { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Alert } from 'react-native'
+
 
 import { clamp } from 'react-native-reanimated'
   const URL = 'https://images.unsplash.com/photo-1491756975177-a13d74ed1e2f?q=80&w=2030&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
@@ -31,6 +33,36 @@ const DetailsScreen = ({navigation , route: {params : {id , imageUrl ,title }}} 
 
   const [count , setCount] = useState(1);
   const [size , setSize] = useState(SIZES[0])  ; 
+  const {mutate : createCart} = useCreateCart();
+
+ const handleAddToCart = () => {
+  if (!id || !count) {
+    Alert.alert("Error", "Invalid product details or quantity.");
+    return;
+  }
+
+  // Prepare the cart item
+  const cartItem = {
+    cart_items: [
+      {
+        product_id: id, // Product ID
+        quantity: count, // Quantity of the product
+      },
+    ],
+  }
+
+  // Call the mutation
+  createCart(cartItem, {
+    onSuccess: (data) => {
+      console.log("Cart created successfully!", data);
+      Alert.alert("Success", "Product added to your cart!");
+    },
+    onError: (error) => {
+      console.error("Error adding product to cart:", error);
+      Alert.alert("Error", "Unable to add product to your cart. Please try again.");
+    },
+  });
+};
 
   console.log(product);
   console.log(id);
@@ -318,15 +350,12 @@ const DetailsScreen = ({navigation , route: {params : {id , imageUrl ,title }}} 
               <Text
                 style={{ color: colors.text, fontSize: 18, fontWeight: "600" }}
               >
-                $ {product?.price}
+                $ {product?.price * count}
               </Text>
             </View>
 
             <TouchableOpacity
-            onPress={() =>
-            {
-              navigation.navigate('CartScreen');
-            }
+            onPress={handleAddToCart
             }
               style={{
                 backgroundColor: colors.primary,

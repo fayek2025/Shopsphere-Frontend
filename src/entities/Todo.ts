@@ -14,10 +14,29 @@ export interface Todo {
 
 
   export interface Product {
-    id: number;
+    product_id: number;
     title: string;
+    description: string;
+    price: number;
+    discount_percentage: number;
+    rating: number;
+    stock: number;
+    brand: {
+      id: number;
+      name: string;
+      description: string;
+      logo: string;
+      website: string;
+      is_active: boolean;
+      created_at: string;
+    };
     thumbnail: string;
-    isActive: boolean;
+    images: string[];
+    is_published: boolean;
+    category_id: number;
+    brand_id: number;
+    gender: string;
+    sizes: string[];
   }
 
 
@@ -35,8 +54,16 @@ export interface Todo {
   }
 
   export interface LoginResponse {
-    token: string;
+    access_token: string;
+    refresh_token: string;
+    user: {
+      id: number;
+      username: string;
+      email: string;
+      full_name?: string;
+    };
   }
+  
 
   export interface SignupCredentials {
     full_name?: string;
@@ -53,4 +80,25 @@ export interface Todo {
     
     email: string;
     password: string;
+  }
+
+
+
+  export interface CartItem {
+    
+    product_id: number;
+    quantity: number;
+   
+  }
+  
+  export interface Cart {
+    id: number;
+    user_id: number;
+    created_at: string;
+    total_amount: number;
+    cart_items: CartItem[];
+  }
+  
+  export interface CartResponse {
+    cart_items: CartItem[]; // Change key to match API expectations
   }

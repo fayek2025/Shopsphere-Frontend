@@ -15,6 +15,7 @@ import icons from "../Constants/icons";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackScreenProps } from "../navigators/RootNavigator";
 import { useLogin } from "../api";
+import { useAuthStore } from "../store/auth/useAuthStore";
 
 
 
@@ -25,19 +26,39 @@ const Login = ({ navigation }: RootStackScreenProps<"Login">) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { mutate: login, error } = useLogin();
+  const  storeLogin = useAuthStore((state) => state.login);
+  
 
   const handleLogin = () => {
+    if (!username || !password) {
+      Alert.alert("Error", "Please enter both username and password.");
+      return;
+    }
+
     login(
       { username, password },
       {
-        onSuccess: () => {
-          // Navigate to home screen after successful login
-          console.log('Login successful!');
-          navigation.navigate('TabsStack', { screen: 'Home' });
+        onSuccess: async (data) => {
+          try {
+            console.log("Login successful!", data);
+
+            // Store user data in Zustand
+            await storeLogin({
+              // user: data.user, // Assuming `user` object is returned from API
+              accessToken: data.access_token,
+              refreshToken: data.refresh_token,
+            });
+            
+            // Navigate to home screen
+            navigation.navigate("TabsStack", { screen: "Home" });
+          } catch (error) {
+            console.error("Error saving user data to Zustand:", error);
+            Alert.alert("Error", "Something went wrong. Please try again.");
+          }
         },
         onError: (error) => {
-          // Handle error
-          Alert.alert('Login Failed', 'Please check your credentials and try again.');
+          console.error("Login error:", error);
+          Alert.alert("Login Failed", "Please check your credentials and try again.");
         },
       }
     );

@@ -13,11 +13,12 @@ import confirmScreen from '../screens/ConfirmScreen'
 import Login from '../screens/login'
 import signUp from '../screens/signUp'
 import OnboardingScreen from '../screens/OnboardingScreen'
+import { useAuthStore } from '../store/auth/useAuthStore'
 
 export type RootStackParamList = {
     TabsStack: NavigatorScreenParams<TabsStackParamList>;
     Details : {
-      id? : string;
+      id? : number;
       imageUrl?: string;
       title?: string;
       description?: string;
@@ -48,42 +49,30 @@ export type RootStackScreenProps <T extends keyof RootStackParamList> = NativeSt
 
 
 const RootNavigator = () => {
+  const { isAuthenticated } = useAuthStore();
+
   return (
-    <RootStack.Navigator>
-      <RootStack.Screen name="onBoarding" component={OnboardingScreen}
-        options={{headerShown : false}}
-        
-        />
-    <RootStack.Screen name="Login" component={Login} options={{headerShown :false}} />
-    <RootStack.Screen name="signUp" component={signUp} options={{headerShown :false}} />
-        
-        <RootStack.Screen name="TabsStack" component={TabsNavigator} options={{headerShown :false}} />   
-        <RootStack.Screen name="Details" component={DetailsScreen} 
-        options={{headerShown : false}}
-        
-        />
-         <RootStack.Screen name="CartScreen" component={CartScreen} 
-        options={{headerShown : false}}
-        
-        
-        
-        />
-
-        <RootStack.Screen name="BrandScreenDetails" component={BrandScreenDetails}
-        options={{headerShown : false}}
-        
-        /> 
-
-<RootStack.Screen name="confirmScreen" component={confirmScreen}
-        options={{headerShown : false}}
-        
-        /> 
-
-
-       
-
+    <RootStack.Navigator screenOptions={{ headerShown: false }}>
+      {!isAuthenticated ? (
+        <>
+          <RootStack.Screen name="onBoarding" component={OnboardingScreen} />
+          <RootStack.Screen name="Login" component={Login} />
+          <RootStack.Screen name="signUp" component={signUp} />
+        </>
+      ) : (
+        <>
+          <RootStack.Screen name="TabsStack" component={TabsNavigator} />
+          <RootStack.Screen name="Details" component={DetailsScreen} />
+          <RootStack.Screen name="CartScreen" component={CartScreen} />
+          <RootStack.Screen
+            name="BrandScreenDetails"
+            component={BrandScreenDetails}
+          />
+          <RootStack.Screen name="confirmScreen" component={confirmScreen} />
+        </>
+      )}
     </RootStack.Navigator>
-  )
-}
+  );
+};
 
 export default RootNavigator

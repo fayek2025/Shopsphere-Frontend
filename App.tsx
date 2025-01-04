@@ -6,11 +6,12 @@ import {} from '@react-navigation/bottom-tabs'
 import {DefaultTheme, NavigationContainer , DarkTheme} from '@react-navigation/native'
 import RootNavigator from './src/navigators/RootNavigator';
 import TabsNavigator from './src/navigators/TabsNavigator';
-import { useMemo , useRef } from 'react';
+import { useMemo , useRef , useEffect } from 'react';
 import { Theme } from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import  { BottomSheetModalProvider} from '@gorhom/bottom-sheet';4
 import { QueryClientProvider , QueryClient, Query } from '@tanstack/react-query';
+import { useAuthStore } from './src/store/auth/useAuthStore';
 
 
 
@@ -25,6 +26,7 @@ export default function App() {
     }
 
     const colorSheme = useColorScheme();
+    const {loadStoredAuth} = useAuthStore();
     // const BottomSheetModalProviderRef = useRef<BottomSheetModalProvider>(null);
 
     const theme : CustomTheme = useMemo(() => ({
@@ -44,6 +46,17 @@ export default function App() {
 
     }), 
     []);
+
+    // Load authentication state on app startup
+  useEffect(() => {
+    const initializeAuth = async () => {
+      await loadStoredAuth(); // Load stored authentication details
+    };
+    initializeAuth();
+  }, [loadStoredAuth]);
+
+
+
   return (
 
     <QueryClientProvider client={queryClient}>

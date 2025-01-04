@@ -16,6 +16,7 @@ import FilterView from '../components/FilterView'
 import { TabsStackScreenProps } from '../navigators/TabsNavigator'
 import { addTodo, fetchTodos } from '../api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useAuthStore } from '../store/auth/useAuthStore'
 
 
 const MESONARY_LIST_DATA = [
@@ -75,6 +76,7 @@ const dummyData = [
   ];
 
 const HomeScreens = ({navigation} : TabsStackScreenProps<"Home">) => {
+  const accessToken = useAuthStore.getState().refreshToken;
     const queryClient = useQueryClient();
      const [search, setSearch] = useState('');
     const { data: todos = [], isLoading, isError, error } = useQuery<Todo[]>({
@@ -108,6 +110,7 @@ const HomeScreens = ({navigation} : TabsStackScreenProps<"Home">) => {
   }, []);
 
     console.log("HomeScreen")
+    console.log(accessToken);
   return (
    
         <ScrollView>
