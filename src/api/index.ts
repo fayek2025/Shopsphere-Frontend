@@ -19,7 +19,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuthStore } from "../store/auth/useAuthStore";
 
 // Base URL for the API
-const BASE_URL = "https://1df4-2a09-bac1-b00-518-00-278-52.ngrok-free.app";
+const BASE_URL = "https://6e63-2a09-bac5-483-15f-00-23-3fe.ngrok-free.app";
 
 /**
  * Fetches all products (todos) from the API.
@@ -371,3 +371,43 @@ export const fetchCarts = async (query = ""): Promise<Cart[]> => {
     throw error;
   }
 };
+
+
+
+
+
+export const updateCart = async (cartId: number, updatedCartData: CartResponse) => {
+  const accessToken = useAuthStore.getState().refreshToken;
+
+  if (!accessToken) {
+    throw new Error('No access token found. Please log in again.');
+  }
+
+  const response = await axios.put(`${BASE_URL}/carts/${cartId}/`, updatedCartData, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data; // Return updated cart data
+};
+
+export const useUpdateCart = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ cartId, updatedCartData }: { cartId: number; updatedCartData: CartResponse }) =>
+      updateCart(cartId, updatedCartData),
+    onSuccess: (data) => {
+      console.log('Cart updated successfully:', data);
+
+      // Invalidate `carts` query to fetch updated cart data
+      queryClient.invalidateQueries(['carts']);
+    },
+    onError: (error) => {
+      console.error('Error updating cart:', error);
+    },
+  });
+};
+

@@ -12,12 +12,17 @@ import Icons from '@expo/vector-icons/MaterialIcons';
 import { useTheme } from '@react-navigation/native';
 import CartItems from '../components/CartItems';
 import { fetchCarts } from '../api';
+import { useUpdateCart } from '../api'; // Adjust the path to match your file structure
+import { Alert } from 'react-native';
+
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 const CartScreen = ({ navigation }: RootStackScreenProps<'CartScreen'>) => {
   
   const { colors } = useTheme();
   const queryClient = useQueryClient();
   const [search , setSearch] = useState('');
+  const updateCartMutation = useUpdateCart();
+
 
   const { data: carts = [], isLoading, isError, error } = useQuery({
     queryKey: ['carts' , { search }],
@@ -63,24 +68,67 @@ const CartScreen = ({ navigation }: RootStackScreenProps<'CartScreen'>) => {
   );
 
   // Handle quantity increment
-  const handleIncrement = (id: string) => {
-    setCartData((prevData) =>
-      prevData.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      )
+  const handleIncrement = (cartId: number, productId: number, currentQuantity: number) => {
+    const newQuantity = currentQuantity + 1;
+  
+    const updatedCartData = {
+      cart_items: [
+        {
+          product_id: productId,
+          quantity: newQuantity,
+        },
+      ],
+    };
+  
+    updateCartMutation.mutate(
+      { cartId, updatedCartData },
+      {
+        onSuccess: (data) => {
+          console.log('Cart updated successfully:', data);
+          Alert.alert('Success', 'Quantity updated successfully!');
+        },
+        onError: (error) => {
+          console.error('Error updating cart:', error);
+          Alert.alert('Error', 'Failed to update quantity. Please try again.');
+        },
+      }
     );
   };
+  
 
   // Handle quantity decrement
-  const handleDecrement = (id: string) => {
-    setCartData((prevData) =>
-      prevData.map((item) =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      )
+  const handleDecrement = (cartId: number, productId: number, currentQuantity: number) => {
+    const newQuantity = currentQuantity - 1;
+  
+    if (newQuantity <= 0) {
+      Alert.alert('Error', 'Quantity must be at least 1.');
+      return;
+    }
+  
+    const updatedCartData = {
+      cart_items: [
+        {
+          product_id: productId,
+          quantity: newQuantity,
+        },
+      ],
+    };
+  
+    updateCartMutation.mutate(
+      { cartId, updatedCartData },
+      {
+        onSuccess: (data) => {
+          console.log('Cart updated successfully:', data);
+          Alert.alert('Success', 'Quantity updated successfully!');
+        },
+        onError: (error) => {
+          console.error('Error updating cart:', error);
+          Alert.alert('Error', 'Failed to update quantity. Please try again.');
+        },
+      }
     );
   };
+  
 
   const renderCartItem = ({ item }: { item: any }) => {
     return (
@@ -88,13 +136,13 @@ const CartScreen = ({ navigation }: RootStackScreenProps<'CartScreen'>) => {
         {item.cart_items.map((cartItem: any) => (
           <CartItems
             key={cartItem.id}
-            imageUri={cartItem.product?.thumbnail} // Pass the product thumbnail
-            title={cartItem.product?.title} // Pass the product title
-            description={cartItem.product?.description} // Pass the product description
-            price={cartItem.subtotal} // Pass the subtotal for the item
-            quantity={cartItem.quantity} // Pass the quantity of the product
-            onIncrement={() => handleIncrement(cartItem.id)} // Increment handler
-            onDecrement={() => handleDecrement(cartItem.id)} // Decrement handler
+            imageUri={cartItem.product?.thumbnail} 
+            title={cartItem.product?.title} 
+            description={cartItem.product?.description} 
+            price={cartItem.subtotal} 
+            quantity={cartItem.quantity} 
+            onIncrement={() => handleIncrement(cartItem.id)} 
+            onDecrement={() => handleDecrement(cartItem.id)} 
           />
         ))}
       </>
