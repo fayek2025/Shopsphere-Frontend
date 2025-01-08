@@ -18,7 +18,7 @@ import { clamp } from 'react-native-reanimated'
 
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "3XL"];
 const DetailsScreen = ({navigation , route: {params : {id , imageUrl ,title }}} : RootStackScreenProps<"Details">) => {
-  const { mutate } = useCreateWishlist();
+  const { mutate: createWishlistItem } = useCreateWishlist();
   const { data: product, isLoading, isError, error } = useQuery({
     queryKey: ['todos', id],
     queryFn: () => {
@@ -71,27 +71,28 @@ const DetailsScreen = ({navigation , route: {params : {id , imageUrl ,title }}} 
 
 
 const handleFavourite = (productId: number) => {
-    
+  // Check if the productId is valid
+  if (!productId) {
+    console.log("Invalid product ID");
+    return;
+  }
+
+  console.log('Adding product to wishlist...');
   
-    const toggleFavourite = () => {
-      if (isLoading) {
-        console.log('Processing...');
-        return;
-      }
-  
-      mutate(
-        { product_id: productId },
-        {
-          onSuccess: (data) => {
-            console.log(`Product ${productId} added to wishlist successfully:`, data);
-          },
-          onError: (error) => {
-            console.error(`Failed to add product ${productId} to wishlist:`, error);
-          },
-        }
-      );
-    };
-  };
+  // Call createWishlistItem directly
+  createWishlistItem(
+    { product_id: productId },  // The request body with product ID
+    {
+      onSuccess: (data) => {
+        console.log(`Product ${productId} added to wishlist successfully:`, data);
+      },
+      onError: (error) => {
+        console.error(`Failed to add product ${productId} to wishlist:`, error);
+      },
+    }
+  );
+};
+
 
 
   console.log(product);
@@ -148,7 +149,11 @@ const handleFavourite = (productId: number) => {
               borderWidth: 1,
               borderColor: "#fff",
             }}
-            onPress={() => handleFavourite(id)}
+            onPress={() =>{
+              handleFavourite(id);
+              console.log('Favourite');
+
+            } }
           >
             <Icons name="favorite-border" size={24} color={"black"} />
           </TouchableOpacity>

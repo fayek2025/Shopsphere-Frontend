@@ -24,32 +24,32 @@ export const useAuthStore = create<AuthState>((set) => ({
   refreshToken: null,
   isAuthenticated: false,
 
-  // Login and save user data
+  // Login function
   login: async ({  accessToken, refreshToken }) => {
-    if ( accessToken && refreshToken) {
+    if (accessToken && refreshToken) {
       try {
         await AsyncStorage.setItem('access_token', accessToken);
         await AsyncStorage.setItem('refresh_token', refreshToken);
-        // await AsyncStorage.setItem('user', JSON.stringify(user));
+        // await AsyncStorage.setItem('user', JSON.stringify(user));  // Store the user data
+
+        set({
+          
+          accessToken,
+          refreshToken,
+          isAuthenticated: true,
+        });
       } catch (error) {
         console.error('Error saving auth data to AsyncStorage:', error);
-        return;
       }
-
-      set({
-        // user,
-        accessToken,
-        refreshToken,
-        isAuthenticated: true,
-      });
     } else {
       console.error('Invalid login data: user, accessToken, and refreshToken must be provided.');
     }
   },
 
-  // Logout and clear data
+  // Logout function to clear user and tokens from both the state and AsyncStorage
   logout: async () => {
     try {
+      // Clear stored data from AsyncStorage
       await AsyncStorage.removeItem('access_token');
       await AsyncStorage.removeItem('refresh_token');
       await AsyncStorage.removeItem('user');
@@ -57,6 +57,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       console.error('Error clearing auth data from AsyncStorage:', error);
     }
 
+    // Update Zustand state to reflect that the user is logged out
     set({
       user: null,
       accessToken: null,
@@ -65,17 +66,17 @@ export const useAuthStore = create<AuthState>((set) => ({
     });
   },
 
-  // Load stored auth data on app start
+  // Load stored auth data when the app starts
   loadStoredAuth: async () => {
     try {
       const accessToken = await AsyncStorage.getItem('access_token');
       const refreshToken = await AsyncStorage.getItem('refresh_token');
-      // const userString = await AsyncStorage.getItem('user');
+      const userString = await AsyncStorage.getItem('user');
 
-      if (accessToken && refreshToken ) {
-        // const user: User = JSON.parse(userString);
+      if (accessToken && refreshToken && userString) {
+        const user: User = JSON.parse(userString);
         set({
-         
+          user,
           accessToken,
           refreshToken,
           isAuthenticated: true,

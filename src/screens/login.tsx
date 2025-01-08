@@ -34,22 +34,27 @@ const Login = ({ navigation }: RootStackScreenProps<"Login">) => {
       Alert.alert("Error", "Please enter both username and password.");
       return;
     }
-
+  
     login(
       { username, password },
       {
         onSuccess: async (data) => {
           try {
             console.log("Login successful!", data);
-
+  
+            // Ensure the API response includes a `user` object
+            if (!data.user) {
+              throw new Error("User data is missing in the API response.");
+            }
+  
             // Store user data in Zustand
             await storeLogin({
-              // user: data.user, // Assuming `user` object is returned from API
+               // Ensure `data.user` is present in the API response
               accessToken: data.access_token,
               refreshToken: data.refresh_token,
             });
-            
-            // Navigate to home screen
+  
+            // Navigate to the home screen
             navigation.navigate("TabsStack", { screen: "Home" });
           } catch (error) {
             console.error("Error saving user data to Zustand:", error);
@@ -63,8 +68,7 @@ const Login = ({ navigation }: RootStackScreenProps<"Login">) => {
       }
     );
   };
-
-  // const handleLogin = () =>
+    // const handleLogin = () =>
   // {
   //   navigation.navigate('TabsStack', { screen: 'Home' });
   // }

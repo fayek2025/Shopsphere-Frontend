@@ -12,7 +12,7 @@ import {
 } from "react-native";
 
 
-
+import { useAuthStore } from "../store/auth/useAuthStore";
 import icons from "../Constants/icons";
 import { settings } from "../Constants/data";
 import { RootStackScreenProps } from "../navigators/RootNavigator";
@@ -27,6 +27,8 @@ interface SettingsItemProp {
   textStyle?: object;
   showArrow?: boolean;
 }
+
+
 
 const SettingsItem = ({
   icon,
@@ -58,6 +60,16 @@ const Profile = ({navigation} : TabsStackScreenProps<"Profile">) => {
 //       Alert.alert("Error", "Failed to logout");
 //     }
 //   };
+
+const logoutHandler = async () => {
+  try {
+    await useAuthStore.getState().logout();
+    navigation.navigate("Login");
+    console.log("User logged out successfully!");
+  } catch (error) {
+    console.error("Error logging out:", error);
+  }
+};
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -105,7 +117,7 @@ const Profile = ({navigation} : TabsStackScreenProps<"Profile">) => {
             title="Logout"
             textStyle={styles.logoutText}
             showArrow={false}
-            onPress={() => navigation.navigate("Login")}
+            onPress={logoutHandler}
           />
         </View>
       </ScrollView>

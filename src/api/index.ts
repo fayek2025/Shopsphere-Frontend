@@ -181,12 +181,12 @@ const loginUser = async (
     console.log("Login response:", response.data);
 
     // Ensure the user data is included in the response
-    const { access_token, refresh_token, user } = response.data;
+    const { access_token, refresh_token } = response.data;
 
     // Ensure user data exists, then call the login method from useAuthStore
-    if (user && access_token && refresh_token) {
+    if ( access_token && refresh_token) {
       useAuthStore.getState().login({
-        user,
+        
         accessToken: access_token,
         refreshToken: refresh_token,
       });
