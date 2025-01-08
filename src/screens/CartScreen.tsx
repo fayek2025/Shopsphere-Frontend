@@ -14,6 +14,7 @@ import CartItems from '../components/CartItems';
 import { fetchCarts } from '../api';
 import { useUpdateCart } from '../api'; // Adjust the path to match your file structure
 import { Alert } from 'react-native';
+import { useDeleteCartItem } from '../api';
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 const CartScreen = ({ navigation }: RootStackScreenProps<'CartScreen'>) => {
@@ -22,6 +23,7 @@ const CartScreen = ({ navigation }: RootStackScreenProps<'CartScreen'>) => {
   const queryClient = useQueryClient();
   const [search , setSearch] = useState('');
   const updateCartMutation = useUpdateCart();
+  const deleteCartMutation = useDeleteCartItem();
 
 
   const { data: carts = [], isLoading, isError, error } = useQuery({
@@ -61,15 +63,22 @@ const CartScreen = ({ navigation }: RootStackScreenProps<'CartScreen'>) => {
   ]);
 
   // Calculate total price dynamically
-  const totalPrice = useMemo(
-    () =>
-      cartData.reduce((sum, item) => sum + item.price * item.quantity, 0),
-    [cartData]
-  );
+  const totalPrice = useMemo(() => {
+    if (!carts) return 0; // Handle cases where carts might be undefined
+    return carts.reduce((total, cart) => {
+      const cartTotal = cart.cart_items.reduce((cartSum, cartItem) => {
+        return cartSum + (cartItem.product?.price || 0) * cartItem.quantity;
+      }, 0);
+      return total + cartTotal;
+    }, 0);
+  }, [carts]);
 
   // Handle quantity increment
   const handleIncrement = (cartId: number, productId: number, currentQuantity: number) => {
     const newQuantity = currentQuantity + 1;
+    console.log("productId", productId);
+    console.log("cartId", cartId);
+  
   
     const updatedCartData = {
       cart_items: [
@@ -94,11 +103,41 @@ const CartScreen = ({ navigation }: RootStackScreenProps<'CartScreen'>) => {
       }
     );
   };
+
+
+  const handleDelete = (cartId: number) => {
+    Alert.alert(
+      'Delete Item',
+      'Are you sure you want to remove this item from your cart?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          onPress: () => {
+            deleteCartMutation.mutate(cartId, {
+              onSuccess: () => {
+                Alert.alert('Success', 'Cart item deleted successfully!');
+              },
+              onError: (error) => {
+                Alert.alert('Error', 'Failed to delete cart item. Please try again.');
+                console.error('Error deleting cart item:', error);
+              },
+            });
+          },
+        },
+      ]
+    );
+  };
   
 
   // Handle quantity decrement
   const handleDecrement = (cartId: number, productId: number, currentQuantity: number) => {
     const newQuantity = currentQuantity - 1;
+    console.log("productId", productId);
+    console.log("cartId", cartId);
   
     if (newQuantity <= 0) {
       Alert.alert('Error', 'Quantity must be at least 1.');
@@ -135,14 +174,15 @@ const CartScreen = ({ navigation }: RootStackScreenProps<'CartScreen'>) => {
       <>
         {item.cart_items.map((cartItem: any) => (
           <CartItems
-            key={cartItem.id}
+            id={item.id}
             imageUri={cartItem.product?.thumbnail} 
             title={cartItem.product?.title} 
             description={cartItem.product?.description} 
-            price={cartItem.subtotal} 
+            price={cartItem.product?.price} 
             quantity={cartItem.quantity} 
-            onIncrement={() => handleIncrement(cartItem.id)} 
-            onDecrement={() => handleDecrement(cartItem.id)} 
+            onIncrement={() => handleIncrement(item.id , cartItem.product?.product_id , cartItem.quantity)} 
+            onDecrement={() => handleDecrement(item.id , cartItem.product?.product_id , cartItem.quantity)} 
+            onRemove={() => handleDelete(item.id)}
           />
         ))}
       </>
@@ -248,7 +288,7 @@ const CartScreen = ({ navigation }: RootStackScreenProps<'CartScreen'>) => {
         </View>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate('confirmScreen')}
+          onPress={() => navigation.navigate('confirmScreen' , { totalPrice })}
           style={{
             backgroundColor: colors.primary,
             height: 64,

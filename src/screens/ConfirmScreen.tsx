@@ -9,7 +9,7 @@ import { FlatList } from 'react-native-gesture-handler';
 
 const Payment = ['bkash', 'nagad', 'rocket', 'visa', 'mastercard', 'paypal', 'amex', 'cash'];
 
-const confirmScreen = ({navigation} : RootStackScreenProps<"confirmScreen">) => {
+const confirmScreen = ({navigation , route: {params : {totalPrice}}} : RootStackScreenProps<"confirmScreen">) => {
     const {colors}= useTheme();
     const [payment , setPayment] = React.useState(0);
   return (

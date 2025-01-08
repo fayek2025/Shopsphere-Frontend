@@ -4,6 +4,7 @@ import Icons from '@expo/vector-icons/MaterialIcons';
 import { useTheme } from '@react-navigation/native';
 
 type CartItemsProps = {
+  id: number;
   imageUri: string;
   title: string;
   description: string;
@@ -15,6 +16,7 @@ type CartItemsProps = {
 };
 
 const CartItems = ({
+  id,
   imageUri,
   title,
   description,
@@ -58,7 +60,8 @@ const CartItems = ({
       {/* Product Details */}
       <View style={{ marginHorizontal: 16, flex: 1 }}>
         <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text }}>
-          {title}
+          {title} {id}
+          
         </Text>
         <Text style={{ fontSize: 14, color: 'gray' }}>{description}</Text>
         <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text }}>

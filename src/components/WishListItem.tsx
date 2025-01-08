@@ -5,13 +5,13 @@ import Icons from '@expo/vector-icons/MaterialIcons';
 
 
 type WishListItemProps = { 
-    imageUri: string;
-    title: string;
-    description: string;
-    totalPrice: number;
-    quantity: number;
-    onIncrement: () => void;
-    onDecrement: () => void;
+    imageUri?: string;
+    title?: string;
+    description?: string;
+    totalPrice?: number;
+    quantity?: number;
+    onIncrement?: () => void;
+    onDecrement?: () => void;
     onRemove?: () => void;
 }
 

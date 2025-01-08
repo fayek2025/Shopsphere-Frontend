@@ -383,7 +383,7 @@ export const updateCart = async (cartId: number, updatedCartData: CartResponse) 
     throw new Error('No access token found. Please log in again.');
   }
 
-  const response = await axios.put(`${BASE_URL}/carts/${cartId}/`, updatedCartData, {
+  const response = await axios.put(`${BASE_URL}/carts/${cartId}`, updatedCartData, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${accessToken}`,
@@ -411,3 +411,38 @@ export const useUpdateCart = () => {
   });
 };
 
+// API Function to Delete a Cart Item
+export const deleteCartItem = async (cartId: number) => {
+  const accessToken = useAuthStore.getState().refreshToken;
+
+  if (!accessToken) {
+    throw new Error('No access token found. Please log in again.');
+  }
+
+  const response = await axios.delete(`${BASE_URL}/carts/${cartId}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data; // Return the API response (optional)
+};
+
+// React Query Hook for Deleting Cart Items
+export const useDeleteCartItem = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (cartId: number) => deleteCartItem(cartId),
+    onSuccess: (data) => {
+      console.log('Cart item deleted successfully:', data);
+
+      // Invalidate the `carts` query to refresh the cart list
+      queryClient.invalidateQueries(['carts']);
+    },
+    onError: (error) => {
+      console.error('Error deleting cart item:', error);
+    },
+  });
+};

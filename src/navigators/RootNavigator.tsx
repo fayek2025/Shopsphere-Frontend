@@ -33,7 +33,9 @@ export type RootStackParamList = {
       price?: string;
     };
 
-    confirmScreen: undefined;
+    confirmScreen: {
+      totalPrice: number;
+    };
     Login : undefined;
     signUp: undefined;
     onBoarding : undefined;

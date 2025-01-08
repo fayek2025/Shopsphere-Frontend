@@ -9,13 +9,13 @@ import Icons from "@expo/vector-icons/MaterialIcons";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { RootStackScreenProps } from "./RootNavigator";
 import CustomBottomTabs from "../components/CustomBottomTabs";
-import QueryScreen from "../screens/QueryScreen";
+import wishlist from "../screens/wishlist";
 import BrandScreen from "../screens/BrandScreen";
 import Profile from "../screens/ProfileScreen";
 
 export type TabsStackParamList = {
   Home: undefined;
-  Query: undefined;
+  Wish: undefined;
   Brand: undefined;
   Profile: undefined;
 };
@@ -47,8 +47,8 @@ const TabsNavigator = () => {
       />
       
       <TabsStack.Screen
-        name="Query"
-        component={QueryScreen}
+        name="Wish"
+        component={wishlist}
         options={{
           headerShown: false,
           tabBarIcon(props) {
