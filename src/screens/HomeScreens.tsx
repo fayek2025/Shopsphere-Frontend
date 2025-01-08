@@ -14,7 +14,7 @@ import CustomBackdrop from '../components/CustomBackdrop'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import FilterView from '../components/FilterView'
 import { TabsStackScreenProps } from '../navigators/TabsNavigator'
-import { addTodo, fetchTodos } from '../api';
+import { addTodo, fetchTodos , useCreateWishlist } from '../api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../store/auth/useAuthStore'
 
@@ -78,6 +78,7 @@ const dummyData = [
 const HomeScreens = ({navigation} : TabsStackScreenProps<"Home">) => {
   const accessToken = useAuthStore.getState().refreshToken;
     const queryClient = useQueryClient();
+   
      const [search, setSearch] = useState('');
     const { data: todos = [], isLoading, isError, error } = useQuery<Todo[]>({
         queryKey: ['todos', { search }],
@@ -109,6 +110,33 @@ const HomeScreens = ({navigation} : TabsStackScreenProps<"Home">) => {
     console.log('handleSheetChanges', index);
   }, []);
 
+
+
+  //handle Favourite Function
+  const handleFavourite = (productId: number) => {
+    const { mutate } = useCreateWishlist();
+  
+    const toggleFavourite = () => {
+      if (isLoading) {
+        console.log('Processing...');
+        return;
+      }
+  
+      mutate(
+        { product_id: productId },
+        {
+          onSuccess: (data) => {
+            console.log(`Product ${productId} added to wishlist successfully:`, data);
+          },
+          onError: (error) => {
+            console.error(`Failed to add product ${productId} to wishlist:`, error);
+          },
+        }
+      );
+    };
+  
+    return toggleFavourite;
+  };
     console.log("HomeScreen")
     console.log(accessToken);
   return (
@@ -462,6 +490,7 @@ const HomeScreens = ({navigation} : TabsStackScreenProps<"Home">) => {
                         if(isSelected){
                             setSelectMansory(null);
                             console.log("Unselected");
+                            handleFavourite(item.product_id);
                             return;
                         }
                         setSelectMansory(i);

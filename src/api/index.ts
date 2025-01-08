@@ -7,7 +7,9 @@ import {
   LoginResponse,
   SignupCredentials,
   SignupResponse,
-  Cart
+  Cart,
+  WishlistRequest,
+  WishlistResponse,
 } from "../entities/Todo";
 import {
   useMutation,
@@ -19,7 +21,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuthStore } from "../store/auth/useAuthStore";
 
 // Base URL for the API
-const BASE_URL = "https://6e63-2a09-bac5-483-15f-00-23-3fe.ngrok-free.app";
+const BASE_URL = "https://c414-2a09-bac5-498-101e-00-19b-1d.ngrok-free.app";
 
 /**
  * Fetches all products (todos) from the API.
@@ -443,6 +445,45 @@ export const useDeleteCartItem = () => {
     },
     onError: (error) => {
       console.error('Error deleting cart item:', error);
+    },
+  });
+};
+
+
+//Wishlist
+
+const createWishlistItem = async (requestBody: { product_id: number }) => {
+  const accessToken = useAuthStore.getState().refreshToken;
+  console.log('Access Token:', accessToken);
+
+  if (!accessToken) {
+    throw new Error('No access token found. Please log in again.');
+  }
+
+  try {
+    const response = await axios.post(`${BASE_URL}/wishlist`, requestBody, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    });
+
+    console.log('API Response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('API Error:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const useCreateWishlist = () => {
+  return useMutation({
+    mutationFn: (requestBody: { product_id: number }) => createWishlistItem(requestBody),
+    onSuccess: (data) => {
+      console.log('Wishlist item created successfully:', data);
+    },
+    onError: (error) => {
+      console.error('Error creating wishlist item:', error);
     },
   });
 };

@@ -6,7 +6,7 @@ import Icons from '@expo/vector-icons/MaterialIcons'
 import { useTheme } from '@react-navigation/native'
 import { StyleSheet } from 'react-native'
 import { StatusBar } from 'react-native'
-import { fetchProductById , useCreateCart } from '../api'
+import { fetchProductById , useCreateCart, useCreateWishlist } from '../api'
 import BottomSheet, { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Alert } from 'react-native'
@@ -18,6 +18,7 @@ import { clamp } from 'react-native-reanimated'
 
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "3XL"];
 const DetailsScreen = ({navigation , route: {params : {id , imageUrl ,title }}} : RootStackScreenProps<"Details">) => {
+  const { mutate } = useCreateWishlist();
   const { data: product, isLoading, isError, error } = useQuery({
     queryKey: ['todos', id],
     queryFn: () => {
@@ -42,6 +43,8 @@ const DetailsScreen = ({navigation , route: {params : {id , imageUrl ,title }}} 
     return;
   }
 
+  
+
   // Prepare the cart item
   const cartItem = {
     cart_items: [
@@ -64,6 +67,32 @@ const DetailsScreen = ({navigation , route: {params : {id , imageUrl ,title }}} 
     },
   });
 };
+
+
+
+const handleFavourite = (productId: number) => {
+    
+  
+    const toggleFavourite = () => {
+      if (isLoading) {
+        console.log('Processing...');
+        return;
+      }
+  
+      mutate(
+        { product_id: productId },
+        {
+          onSuccess: (data) => {
+            console.log(`Product ${productId} added to wishlist successfully:`, data);
+          },
+          onError: (error) => {
+            console.error(`Failed to add product ${productId} to wishlist:`, error);
+          },
+        }
+      );
+    };
+  };
+
 
   console.log(product);
   console.log(id);
@@ -106,7 +135,7 @@ const DetailsScreen = ({navigation , route: {params : {id , imageUrl ,title }}} 
               borderColor: "#fff",
             }}
           >
-            <Icons name="arrow-back" size={24} color={"#fff"} />
+            <Icons name="arrow-back" size={24} color={"black"} />
           </TouchableOpacity>
           <View style={{ flex: 1 }} />
           <TouchableOpacity
@@ -119,8 +148,9 @@ const DetailsScreen = ({navigation , route: {params : {id , imageUrl ,title }}} 
               borderWidth: 1,
               borderColor: "#fff",
             }}
+            onPress={() => handleFavourite(id)}
           >
-            <Icons name="favorite-border" size={24} color={"#fff"} />
+            <Icons name="favorite-border" size={24} color={"black"} />
           </TouchableOpacity>
           <TouchableOpacity
             style={{

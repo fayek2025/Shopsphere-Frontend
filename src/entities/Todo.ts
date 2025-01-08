@@ -102,3 +102,41 @@ export interface Todo {
   export interface CartResponse {
     cart_items: CartItem[]; // Change key to match API expectations
   }
+
+
+  export interface WishlistRequest {
+    product_id: number;
+  }
+  
+ export interface WishlistResponse {
+    id: number;
+    user_id: number;
+    product_id: number;
+    created_at: string;
+    product: {
+      product_id: number;
+      title: string;
+      description: string;
+      price: number;
+      discount_percentage: number;
+      rating: number;
+      stock: number;
+      brand: {
+        id: number;
+        name: string;
+        description: string;
+        logo: string;
+        website: string;
+        is_active: boolean;
+        created_at: string;
+      };
+      thumbnail: string;
+      images: string[];
+      is_published: boolean;
+      category_id: number;
+      brand_id: number;
+      gender: string;
+      sizes: string[];
+    };
+  }
+  
