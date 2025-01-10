@@ -12,6 +12,7 @@ import MasonryList from 'reanimated-masonry-list';
 import { BlurView } from 'expo-blur';
 import { fetchBrandsProduct } from '../api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import ProductListItem from '../components/ProductListItem'
 
 
 const Categoris = [ 
@@ -165,7 +166,7 @@ const BrandDetailScreens = ({
      </View>
 
                {/* // Masonry List Section */}
-               <MasonryList
+               {/* <MasonryList
   data={Brandproduct}
   keyExtractor={(item) => item.id}
   contentContainerStyle = {{
@@ -353,6 +354,11 @@ const BrandDetailScreens = ({
   
   onEndReachedThreshold={0.1}
  
+/> */}
+
+<ProductListItem data={Brandproduct} 
+  navigation={navigation}
+  
 />
 
      
