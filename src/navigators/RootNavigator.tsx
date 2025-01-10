@@ -55,14 +55,14 @@ const RootNavigator = () => {
 
   return (
     <RootStack.Navigator screenOptions={{ headerShown: false }}>
-      {!isAuthenticated ? (
-        <>
+      {/* {!isAuthenticated ? ( */}
+      
           <RootStack.Screen name="onBoarding" component={OnboardingScreen} />
           <RootStack.Screen name="Login" component={Login} />
           <RootStack.Screen name="signUp" component={signUp} />
-        </>
-      ) : (
-        <>
+        
+     
+       
           <RootStack.Screen name="TabsStack" component={TabsNavigator} />
           <RootStack.Screen name="Details" component={DetailsScreen} />
           <RootStack.Screen name="CartScreen" component={CartScreen} />
@@ -71,8 +71,8 @@ const RootNavigator = () => {
             component={BrandScreenDetails}
           />
           <RootStack.Screen name="confirmScreen" component={confirmScreen} />
-        </>
-      )}
+        
+    
     </RootStack.Navigator>
   );
 };
