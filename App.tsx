@@ -12,6 +12,10 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import  { BottomSheetModalProvider} from '@gorhom/bottom-sheet';4
 import { QueryClientProvider , QueryClient, Query } from '@tanstack/react-query';
 import { useAuthStore } from './src/store/auth/useAuthStore';
+import * as Network from 'expo-network';
+
+
+
 
 
 

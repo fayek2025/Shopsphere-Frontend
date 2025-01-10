@@ -1,6 +1,7 @@
 import { CartResponse, Todo } from "../entities/Todo";
 import { Brand } from "../entities/Todo"; // Fix the incorrect import
 import { Product } from "../entities/Todo";
+import { Linking } from "react-native";
 import {
   BrandIDProduct,
   LoginCredentials,
@@ -10,7 +11,9 @@ import {
   Cart,
   WishlistRequest,
   WishlistResponse,
-  WishlistItem
+  WishlistItem,
+  User,
+  UserProfileUpdate
 } from "../entities/Todo";
 import {
   useMutation,
@@ -22,31 +25,70 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuthStore } from "../store/auth/useAuthStore";
 
 // Base URL for the API
-const BASE_URL = "https://c414-2a09-bac5-498-101e-00-19b-1d.ngrok-free.app";
+const BASE_URL = "https://cba3-2a09-bac5-484-137d-00-1f1-1bd.ngrok-free.app";
+const SSL = "http://192.168.0.105:3030"
 
 /**
  * Fetches all products (todos) from the API.
  * Extracts the `data` field from the API response.
  */
+// export const fetchTodos = async (query = ""): Promise<Todo[]> => {
+//   try {
+//     const response = await fetch(`${BASE_URL}/products/`);
+//     if (!response.ok) {
+//       throw new Error(`Failed to fetch todos: ${response.statusText}`);
+//     }
+
+//     const responseData = await response.json();
+
+//     // Extract the `data` field containing the todos array
+//     const todos: Todo[] = responseData.data || [];
+//     console.log("Fetched todos (products):", todos);
+
+//     return todos;
+//   } catch (error) {
+//     console.error("Error fetching todos:", error);
+//     throw error;
+//   }
+// };
+
 export const fetchTodos = async (query = ""): Promise<Todo[]> => {
+  const allTodos: Todo[] = [];
+  let currentPage = 1;
+  const pageSize = 100; // Adjust this value according to your API's pagination limit
+  let hasMorePages = true;
+
   try {
-    const response = await fetch(`${BASE_URL}/products/`);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch todos: ${response.statusText}`);
+    while (currentPage <5) {
+      const response = await fetch(
+        `${BASE_URL}/products?page=${currentPage}&limit=${pageSize}&query=${query}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch todos: ${response.statusText}`);
+      }
+
+      const responseData = await response.json();
+      const todos: Todo[] = responseData.data || [];
+      console.log(`Fetched page ${currentPage}:`, todos);
+
+      // Accumulate the results
+      allTodos.push(...todos);
+
+      // Check if there are more pages (adjust this based on your API response structure)
+      hasMorePages = responseData.hasNextPage; // or check for the last page condition
+      currentPage++; // Move to the next page
     }
 
-    const responseData = await response.json();
+    console.log("Fetched all todos (products):", allTodos);
+    return allTodos;
 
-    // Extract the `data` field containing the todos array
-    const todos: Todo[] = responseData.data || [];
-    console.log("Fetched todos (products):", todos);
-
-    return todos;
   } catch (error) {
     console.error("Error fetching todos:", error);
     throw error;
   }
 };
+
 
 /**
  * Fetches a single product by ID from the API.
@@ -74,34 +116,85 @@ export const fetchProductById = async (
   }
 };
 
+// export const fetchBrandsProduct = async (
+//   BrandID: number
+// ): Promise<BrandIDProduct[]> => {
+//   try {
+//     const response = await fetch(`${BASE_URL}/brands/${BrandID}/products`);
+//     if (!response.ok) {
+//       throw new Error(
+//         `Failed to fetch products by Brand ID: ${response.statusText}`
+//       );
+//     }
+
+//     const responseData = await response.json();
+//     if (!responseData || !Array.isArray(responseData.data)) {
+//       throw new Error(
+//         `Unexpected API response format: ${JSON.stringify(responseData)}`
+//       );
+//     }
+
+//     // Extract the `data` field containing the product
+//     const Brandproduct: BrandIDProduct[] = responseData.data;
+//     console.log("Fetched product by ID:", Brandproduct);
+
+//     return Brandproduct;
+//   } catch (error) {
+//     console.error(`Error fetching product with ID ${BrandID}:`, error);
+//     throw error;
+//   }
+// };
+
 export const fetchBrandsProduct = async (
   BrandID: number
 ): Promise<BrandIDProduct[]> => {
+  const allBrandProducts: BrandIDProduct[] = [];
+  let currentPage = 1;
+  const pageSize = 20; // Adjust this according to the API's pagination limit
+  let hasMorePages = true;
+
   try {
-    const response = await fetch(`${BASE_URL}/brands/${BrandID}/products`);
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch products by Brand ID: ${response.statusText}`
+    while (currentPage < 10) {
+      // Request products for a specific brand and page
+      const response = await fetch(
+        `${BASE_URL}/brands/${BrandID}/products?page=${currentPage}&limit=${pageSize}`
       );
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch products by Brand ID: ${response.statusText}`
+        );
+      }
+
+      const responseData = await response.json();
+      if (!responseData || !Array.isArray(responseData.data)) {
+        throw new Error(
+          `Unexpected API response format: ${JSON.stringify(responseData)}`
+        );
+      }
+
+      const brandProducts: BrandIDProduct[] = responseData.data;
+      console.log(`Fetched page ${currentPage} products:`, brandProducts);
+
+      // Accumulate the products from the current page
+      allBrandProducts.push(...brandProducts);
+
+      // Check if there are more pages (adjust based on API's pagination response)
+      hasMorePages = responseData.hasNextPage; // Or check other fields like currentPage, totalPages
+      currentPage++; // Move to the next page
     }
 
-    const responseData = await response.json();
-    if (!responseData || !Array.isArray(responseData.data)) {
-      throw new Error(
-        `Unexpected API response format: ${JSON.stringify(responseData)}`
-      );
-    }
+    console.log("Fetched all products for brand ID:", allBrandProducts);
+    return allBrandProducts;
 
-    // Extract the `data` field containing the product
-    const Brandproduct: BrandIDProduct[] = responseData.data;
-    console.log("Fetched product by ID:", Brandproduct);
-
-    return Brandproduct;
   } catch (error) {
-    console.error(`Error fetching product with ID ${BrandID}:`, error);
+    console.error(`Error fetching products for Brand ID ${BrandID}:`, error);
     throw error;
   }
 };
+
+
+
 
 /**
  * Fetches all brands from the API.
@@ -327,7 +420,13 @@ const createCart = async (cartItems: CartResponse) => {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${accessToken}`,
     },
-  });
+    refetchInterval: 6000,
+  },
+  
+    
+  
+
+);
 
   return response.data; // Return the response data
 };
@@ -560,3 +659,99 @@ export const useDeleteWishlistItem = () => {
   });
 };
 
+//Payment
+export const fetchPaymentGatewayURL = async (): Promise<string> => {
+  let response: Response | undefined; // Declare response outside the try block
+
+  try {
+    response = await fetch(`${SSL}/init`);
+    if (!response.ok) {
+      throw new Error("Failed to initiate payment");
+    }
+
+    const data = await response.json();
+    const gatewayUrl = data?.GatewayPageURL;
+
+    if (!gatewayUrl) {
+      throw new Error("Payment Gateway URL is missing in the response");
+    }
+
+    console.log("Fetched GatewayPageURL:", gatewayUrl);
+    return gatewayUrl;
+  } catch (error) {
+    if (response) {
+      console.error("HTTP Status Code:", response.status); // Print the status code
+    } else {
+      console.error("No response object available");
+    }
+
+    console.error("Error fetching payment gateway URL:", error);
+    throw error;
+  }
+};
+
+
+//fetching user Information
+
+export const fetchUserInfo = async (): Promise<User[]> => {
+  try {
+    const token = useAuthStore.getState().refreshToken; // Replace with the actual token or logic to fetch it
+
+    const response = await fetch(`${BASE_URL}/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch user information: ${response.statusText}`);
+    }
+
+    const responseData = await response.json();
+
+    // Extract the `data` field containing the user info
+    const user: User[] = responseData.data || [];
+    console.log("Fetched user information:", user);
+
+    return user;
+  } catch (error) {
+    console.error("Error fetching user information:", error);
+    throw error;
+  }
+};
+
+// Function to update user profile
+export const updateUserProfile = async (updatedProfileData: UserProfileUpdate) => {
+  const accessToken = useAuthStore.getState().refreshToken;
+
+  if (!accessToken) {
+    throw new Error("No access token found. Please log in again.");
+  }
+
+  const response = await axios.put(`${BASE_URL}/me`, updatedProfileData, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data; // Return updated user profile data
+};
+
+export const useUpdateUserProfile = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (updatedProfileData: UserProfileUpdate) =>
+      updateUserProfile(updatedProfileData),
+    onSuccess: (data) => {
+      console.log("User profile updated successfully:", data);
+
+      // Invalidate `user` query to fetch updated user data
+      queryClient.invalidateQueries(["user"]);
+    },
+    onError: (error) => {
+      console.error("Error updating user profile:", error);
+    },
+  });
+};

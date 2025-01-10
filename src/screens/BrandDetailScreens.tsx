@@ -81,7 +81,7 @@ const BrandDetailScreens = ({
       if (!id) {
         throw new Error('Product ID is undefined');
       }
-      return fetchBrandsProduct(id);
+      return fetchBrandsProduct(id );
     },
     staleTime: Infinity,
   })

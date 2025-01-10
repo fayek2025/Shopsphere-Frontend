@@ -29,49 +29,49 @@ const Login = ({ navigation }: RootStackScreenProps<"Login">) => {
   const  storeLogin = useAuthStore((state) => state.login);
   
 
-  // const handleLogin = () => {
-  //   if (!username || !password) {
-  //     Alert.alert("Error", "Please enter both username and password.");
-  //     return;
-  //   }
+  const handleLogin = () => {
+    if (!username || !password) {
+      Alert.alert("Error", "Please enter both username and password.");
+      return;
+    }
   
-  //   login(
-  //     { username, password },
-  //     {
-  //       onSuccess: async (data) => {
-  //         try {
-  //           console.log("Login successful!", data);
+    login(
+      { username, password },
+      {
+        onSuccess: async (data) => {
+          try {
+            console.log("Login successful!", data);
   
-  //           // Ensure the API response includes a `user` object
-  //           if (!data.user) {
-  //             throw new Error("User data is missing in the API response.");
-  //           }
+            // Ensure the API response includes a `user` object
+            if (!data.user) {
+              throw new Error("User data is missing in the API response.");
+            }
   
-  //           // Store user data in Zustand
-  //           await storeLogin({
-  //              // Ensure `data.user` is present in the API response
-  //             accessToken: data.access_token,
-  //             refreshToken: data.refresh_token,
-  //           });
+            // Store user data in Zustand
+            await storeLogin({
+               // Ensure `data.user` is present in the API response
+              accessToken: data.access_token,
+              refreshToken: data.refresh_token,
+            });
   
-  //           // Navigate to the home screen
-  //           navigation.navigate("TabsStack", { screen: "Home" });
-  //         } catch (error) {
-  //           console.error("Error saving user data to Zustand:", error);
-  //           Alert.alert("Error", "Something went wrong. Please try again.");
-  //         }
-  //       },
-  //       onError: (error) => {
-  //         console.error("Login error:", error);
-  //         Alert.alert("Login Failed", "Please check your credentials and try again.");
-  //       },
-  //     }
-  //   );
-  // };
-    const handleLogin = () =>
-  {
-    navigation.navigate('TabsStack', { screen: 'Home' });
-  }
+            // Navigate to the home screen
+            navigation.navigate("TabsStack", { screen: "Home" });
+          } catch (error) {
+            console.error("Error saving user data to Zustand:", error);
+            Alert.alert("Error", "Something went wrong. Please try again.");
+          }
+        },
+        onError: (error) => {
+          console.error("Login error:", error);
+          Alert.alert("Login Failed", "Please check your credentials and try again.");
+        },
+      }
+    );
+  };
+  //   const handleLogin = () =>
+  // {
+  //   navigation.navigate('TabsStack', { screen: 'Home' });
+  // }
 
   const handleSignUp = () => {
     navigation.navigate("signUp"); // Ensure "SignUp" is a registered route in your navigation stack

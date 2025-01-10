@@ -10,6 +10,7 @@ import CartScreen from '../screens/CartScreen'
 import BrandScreen from '../screens/BrandScreen'
 import BrandScreenDetails from '../screens/BrandDetailScreens'
 import confirmScreen from '../screens/ConfirmScreen'
+import EditProfile from '../screens/EditProfile'
 import Login from '../screens/login'
 import signUp from '../screens/signUp'
 import OnboardingScreen from '../screens/OnboardingScreen'
@@ -39,6 +40,11 @@ export type RootStackParamList = {
     Login : undefined;
     signUp: undefined;
     onBoarding : undefined;
+    EditProfile : {
+      name: string;
+      email: string;
+      username: string;
+    };
    
     
 }
@@ -55,14 +61,14 @@ const RootNavigator = () => {
 
   return (
     <RootStack.Navigator screenOptions={{ headerShown: false }}>
-      {/* {!isAuthenticated ? ( */}
-      
+      {!isAuthenticated ? (
+        <>
           <RootStack.Screen name="onBoarding" component={OnboardingScreen} />
           <RootStack.Screen name="Login" component={Login} />
           <RootStack.Screen name="signUp" component={signUp} />
-        
-     
-       
+        </>
+      ) : (
+        <>
           <RootStack.Screen name="TabsStack" component={TabsNavigator} />
           <RootStack.Screen name="Details" component={DetailsScreen} />
           <RootStack.Screen name="CartScreen" component={CartScreen} />
@@ -71,8 +77,9 @@ const RootNavigator = () => {
             component={BrandScreenDetails}
           />
           <RootStack.Screen name="confirmScreen" component={confirmScreen} />
-        
-    
+          <RootStack.Screen name="EditProfile" component={EditProfile} />
+        </>
+      )}
     </RootStack.Navigator>
   );
 };

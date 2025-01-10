@@ -30,6 +30,8 @@ const CartScreen = ({ navigation }: RootStackScreenProps<'CartScreen'>) => {
     queryKey: ['carts' , { search }],
     queryFn:() => fetchCarts(search), // Pass the function reference, NOT the result
     staleTime: Infinity,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: 'always',
   })
   // Example cart items data with quantity
   const [cartData, setCartData] = useState([

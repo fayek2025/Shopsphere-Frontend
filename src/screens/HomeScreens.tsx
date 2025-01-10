@@ -14,7 +14,8 @@ import CustomBackdrop from '../components/CustomBackdrop'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import FilterView from '../components/FilterView'
 import { TabsStackScreenProps } from '../navigators/TabsNavigator'
-import { addTodo, fetchTodos, useCreateWishlist } from '../api';
+import { addTodo, fetchTodos, useCreateWishlist , fetchUserInfo } from '../api';
+import { Todo , User } from '../entities/Todo'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../store/auth/useAuthStore'
 import ProductListItem from '../components/ProductListItem'
@@ -86,6 +87,12 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
     queryFn: () => fetchTodos(search),
     staleTime: Infinity,
   });
+
+  const {data: userInfo = []} = useQuery<User[]>({
+    queryKey: ['user'],
+    queryFn:  fetchUserInfo,
+    staleTime: Infinity,
+  })
   console.log(todos);
   const { colors } = useTheme();
   const [categoryIndex, setCategoryIndex] = React.useState(0)
@@ -140,6 +147,7 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
   };
   console.log("HomeScreen")
   console.log(accessToken);
+  console.log(userInfo);
   return (
 
     <ScrollView>
@@ -170,7 +178,7 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
             }}
               numberOfLines={1}
 
-            >Hi, Fayek </Text>
+            >Hi, {userInfo?.username}</Text>
             <Text > Discover fashion that suits your styles</Text>
           </View>
           <View
