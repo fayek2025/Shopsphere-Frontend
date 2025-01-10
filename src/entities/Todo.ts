@@ -140,3 +140,35 @@ export interface Todo {
     };
   }
   
+  export interface WishlistItem {
+    id: number; // Unique identifier for the wishlist item
+    user_id: number; // ID of the user who owns the wishlist
+    product_id: number; // ID of the associated product
+    created_at: string; // Timestamp of when the item was added to the wishlist
+    product: {
+      product_id: number; // Product ID
+      title: string; // Product title
+      description: string; // Description of the product
+      price: number; // Product price
+      discount_percentage: number; // Discount on the product
+      rating: number; // Rating of the product
+      stock: number; // Available stock
+      brand: {
+        id: number; // Brand ID
+        name: string; // Brand name
+        description: string; // Brand description
+        logo: string; // Logo URL
+        website: string; // Website URL
+        is_active: boolean; // Whether the brand is active
+        created_at: string; // Timestamp when the brand was created
+      };
+      thumbnail: string; // Thumbnail image URL
+      images: string[]; // Array of image URLs
+      is_published: boolean; // If the product is published
+      category_id: number; // Category ID
+      brand_id: number; // Brand ID
+      gender: string; // Gender category (if applicable)
+      sizes: string[]; // Available sizes
+    };
+  }
+  

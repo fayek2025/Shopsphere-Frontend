@@ -10,6 +10,7 @@ import {
   Cart,
   WishlistRequest,
   WishlistResponse,
+  WishlistItem
 } from "../entities/Todo";
 import {
   useMutation,
@@ -487,3 +488,75 @@ export const useCreateWishlist = () => {
     },
   });
 };
+
+
+export const fetchWishlist = async (query = ""): Promise<WishlistItem[]> => {
+  try {
+    // Construct the full URL with the query if provided
+    const refreshToken = useAuthStore.getState().refreshToken;
+    const url = `${BASE_URL}/wishlist`;
+
+    // Fetch data from the API
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    });
+
+    // Check for non-OK responses
+    if (!response.ok) {
+      throw new Error(`Failed to fetch wishlist: ${response.statusText}`);
+    }
+
+    // Parse the JSON response
+    const responseData = await response.json();
+
+    // Extract the wishlist array from the `data` field
+    const wishlist: WishlistItem[] = responseData.data || [];
+    console.log("Fetched wishlist items:", wishlist);
+
+    return wishlist;
+  } catch (error) {
+    // Log and rethrow errors for higher-level handling
+    console.error("Error fetching wishlist:", error);
+    throw error;
+  }
+};
+
+
+// API Function to Delete a Wishlist Item
+export const deleteWishlistItem = async (wishlistId: number) => {
+  const accessToken = useAuthStore.getState().refreshToken;
+
+  if (!accessToken) {
+    throw new Error('No access token found. Please log in again.');
+  }
+
+  const response = await axios.delete(`${BASE_URL}/wishlist/${wishlistId}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data; // Return the API response (optional)
+};
+
+
+export const useDeleteWishlistItem = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (wishlistId: number) => deleteWishlistItem(wishlistId),
+    onSuccess: (data) => {
+      console.log('Wishlist item deleted successfully:', data);
+
+      // Invalidate the `wishlist` query to refresh the wishlist
+      queryClient.invalidateQueries(['wishlist']);
+    },
+    onError: (error) => {
+      console.error('Error deleting wishlist item:', error);
+    },
+  });
+};
+
