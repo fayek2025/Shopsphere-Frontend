@@ -89,10 +89,12 @@ const TabItem = ({
           name={
             routeName === "Home"
               ? "home"
-              : routeName === "CartScreen"
-              ? "shopping-cart"
+              : routeName === "Wish"
+              ? "favorite"
               : routeName === "Brand"
-              ? "account-balance-wallet"
+              ? "store"
+              : routeName === "Swipe"
+              ? "swipe"
               : "person"
           }
           size={24}

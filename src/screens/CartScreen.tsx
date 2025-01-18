@@ -17,7 +17,7 @@ import { Alert } from 'react-native';
 import { useDeleteCartItem } from '../api';
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-const CartScreen = ({ navigation }: RootStackScreenProps<'CartScreen'>) => {
+const CartScreen = ({ navigation   }: RootStackScreenProps<'CartScreen'>) => {
   
   const { colors } = useTheme();
   const queryClient = useQueryClient();
@@ -33,6 +33,12 @@ const CartScreen = ({ navigation }: RootStackScreenProps<'CartScreen'>) => {
     refetchOnMount: 'always',
     refetchOnWindowFocus: 'always',
   })
+
+  const lastCartId = useMemo(() => {
+    if (!carts || carts.length === 0) return null; // Handle cases where carts might be undefined or empty
+    return carts[carts.length - 1].id; // Assuming 'id' is the identifier for the last cart
+  }, [carts]);
+  
   // Example cart items data with quantity
   const [cartData, setCartData] = useState([
     {
@@ -290,7 +296,14 @@ const CartScreen = ({ navigation }: RootStackScreenProps<'CartScreen'>) => {
         </View>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate('confirmScreen' , { totalPrice })}
+         onPress={() => {
+          if (lastCartId !== null) {
+            navigation.navigate('confirmScreen', { totalPrice, cart_id: lastCartId });
+          } else {
+            Alert.alert('Error', 'No cart selected.');
+          }
+        }}
+        
           style={{
             backgroundColor: colors.primary,
             height: 64,

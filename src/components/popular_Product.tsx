@@ -3,13 +3,15 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import MasonryList from 'reanimated-masonry-list';
 import { useTheme } from '@react-navigation/native';
 
-type ProductListItemProps = { 
+import Icons from '@expo/vector-icons/MaterialIcons';
+
+type PopularProductProps = { 
     navigation?: any;
     handleFavourite?: (id: number) => void;
     data?: any[];
 };
 
-const ProductListItem = ({ navigation, data }: ProductListItemProps) => {
+const PopularProduct = ({ navigation, data }: PopularProductProps) => {
     const { colors } = useTheme();
 
     return (
@@ -47,8 +49,36 @@ const ProductListItem = ({ navigation, data }: ProductListItemProps) => {
                             {item.description}
                         </Text>
                         <Text style={styles.productPrice}>
-                            $ {item.price}
-                        </Text>
+    $ {item.price}
+  </Text>
+                        <View
+  style={{
+    flexDirection: 'row',
+    justifyContent: 'space-between', // Space between price and favorite icon
+    alignItems: 'center', // Center the items vertically within the row
+  }}
+>
+ 
+
+  <TouchableOpacity
+  style ={{
+    paddingVertical : 10
+  }}
+  >
+    <Icons name="favorite" size={24} color={colors.text} />
+  </TouchableOpacity>
+  <Text 
+  style ={{
+    fontSize : 16,
+    fontWeight : '800',
+    color : "red"
+  }}
+  >  {item.likes_count}</Text>
+ 
+</View>
+                       
+
+
                     </View>
                 </TouchableOpacity>
             )}
@@ -106,4 +136,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ProductListItem;
+export default PopularProduct;

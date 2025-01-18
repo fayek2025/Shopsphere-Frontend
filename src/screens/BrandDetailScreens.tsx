@@ -13,6 +13,9 @@ import { BlurView } from 'expo-blur';
 import { fetchBrandsProduct } from '../api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import ProductListItem from '../components/ProductListItem'
+import { fetchBrandsPopularProduct } from '../api'
+import PopularProduct from '../components/popular_Product'
+import { ScrollView } from 'react-native-gesture-handler'
 
 
 const Categoris = [ 
@@ -75,16 +78,30 @@ const BrandDetailScreens = ({
   const [categoryIndex , setCategoryIndex] = React.useState(0);
   const { colors } = useTheme();
 
-  const { data: Brandproduct=[], isLoading, isError, error } = useQuery({
-    queryKey: ['Brandproduct', id],
+  const { data: Brandproduct=[] } = useQuery({
+    queryKey: ['Brandproduct', id , false],
     queryFn: () => {
       if (!id) {
         throw new Error('Product ID is undefined');
       }
-      return fetchBrandsProduct(id );
+      return fetchBrandsProduct(id , false );
     },
     staleTime: Infinity,
   })
+
+
+  const { data: popular=[], isLoading, isError, error } = useQuery({
+    queryKey: ['brandPopularProducts', id , false],
+    queryFn: () => {
+      if (!id) {
+        throw new Error('Product ID is undefined');
+      }
+      return fetchBrandsPopularProduct(id , true );
+    },
+    staleTime: Infinity,
+  })
+
+  console.log("Popular:", popular);
   const handleSelect = (index: number) => {
     if (isSelected === index) {
       setIsSelected(null);
@@ -94,8 +111,11 @@ const BrandDetailScreens = ({
   };
   console.log("brandProduct:",  Brandproduct);
   console.log(id);
-
+  const handlePress = () => {
+    navigation.navigate('CartScreen');
+  }
   return (
+    
     <View style={{ flex: 1, backgroundColor: '#fff' }}>
       {/* Image Section */}
       <View style={{ height: '25%', borderBottomLeftRadius: 24, borderBottomRightRadius: 24, overflow: 'hidden' }}>
@@ -107,7 +127,7 @@ const BrandDetailScreens = ({
             height: '100%',
           }}
         />
-        <TopBar />
+        <TopBar handlePress={handlePress} />
       </View>
 
       {/* Chips Section */}
@@ -356,13 +376,49 @@ const BrandDetailScreens = ({
  
 /> */}
 
+      <ScrollView>
+
+  <Text style = {{
+    fontSize: 20,
+    fontWeight: '600',
+    color: colors.text,
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+    backgroundColor: colors.card,
+  }}
+  >Popular Products</Text>
+  <PopularProduct data={popular} 
+  navigation={navigation}
+  
+/>
+
+<View 
+  style ={{
+    marginTop: 24,
+  }}
+>
+  <Text
+  style = {{
+    fontSize: 20,
+    fontWeight: '600',
+    color: colors.text,
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+    backgroundColor: colors.card,
+  }}>
+    All Products
+  </Text>
+</View>
 <ProductListItem data={Brandproduct} 
   navigation={navigation}
   
 />
 
-     
+</ScrollView>
     </View>
+    
   );
 };
 

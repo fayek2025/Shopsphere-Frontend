@@ -15,6 +15,7 @@ import Login from '../screens/login'
 import signUp from '../screens/signUp'
 import OnboardingScreen from '../screens/OnboardingScreen'
 import { useAuthStore } from '../store/auth/useAuthStore'
+import Transaction from '../screens/Transaction'
 
 export type RootStackParamList = {
     TabsStack: NavigatorScreenParams<TabsStackParamList>;
@@ -36,6 +37,7 @@ export type RootStackParamList = {
 
     confirmScreen: {
       totalPrice: number;
+      cart_id : number;
     };
     Login : undefined;
     signUp: undefined;
@@ -45,6 +47,7 @@ export type RootStackParamList = {
       email: string;
       username: string;
     };
+    Transaction : undefined;
    
     
 }
@@ -78,6 +81,7 @@ const RootNavigator = () => {
           />
           <RootStack.Screen name="confirmScreen" component={confirmScreen} />
           <RootStack.Screen name="EditProfile" component={EditProfile} />
+          <RootStack.Screen name = "Transaction" component={Transaction} />
         </>
       )}
     </RootStack.Navigator>

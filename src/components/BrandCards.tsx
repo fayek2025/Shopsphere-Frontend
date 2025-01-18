@@ -69,7 +69,7 @@ const BrandCards = ({imageUri , title , description , price } : BrandCardsProps)
                     
                     >
 
-<TouchableOpacity
+{/* <TouchableOpacity
                     style = {{
                         flexDirection: 'row',
                         alignItems: 'center',
@@ -85,7 +85,7 @@ const BrandCards = ({imageUri , title , description , price } : BrandCardsProps)
                     
                     >
                         <Icons name='favorite' size={24} color={colors.text} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     
                         
                     

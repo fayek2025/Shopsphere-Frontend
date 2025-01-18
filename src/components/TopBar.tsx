@@ -7,10 +7,11 @@ import { useNavigation } from '@react-navigation/native';
 type TopBarProps = { 
     color?: string;
     borderColor?: string;
+    handlePress?: () => void;
 }
 
 
-const TopBar = ({color , borderColor} : TopBarProps) => {
+const TopBar = ({color , borderColor , handlePress} : TopBarProps) => {
     const navigation = useNavigation();
   return (
     <SafeAreaView
@@ -38,13 +39,18 @@ const TopBar = ({color , borderColor} : TopBarProps) => {
           justifyContent: "center",
           borderRadius: 52,
           borderWidth: 1,
-          borderColor: color,
+          borderColor: "#fff",
+          backgroundColor: "white",
+          shadowColor: '#000', // Adds shadow for iOS
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 4,
         }}
       >
         <Icons name="arrow-back" size={24} color={color} />
       </TouchableOpacity>
       <View style={{ flex: 1 }} />
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={{
           width: 52,
           aspectRatio: 1,
@@ -56,7 +62,7 @@ const TopBar = ({color , borderColor} : TopBarProps) => {
         }}
       >
         <Icons name="favorite-border" size={24} color={"color"} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <TouchableOpacity
         style={{
           width: 52,
@@ -65,8 +71,15 @@ const TopBar = ({color , borderColor} : TopBarProps) => {
           justifyContent: "center",
           borderRadius: 52,
           borderWidth: 1,
-          borderColor: color,
+          borderColor: "#fff",
+          backgroundColor: "white",
+          shadowColor: '#000', // Adds shadow for iOS
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 4,
         }}
+
+        onPress={handlePress}
       >
         <Icons name="add-shopping-cart" size={24} color={"color"} />
       </TouchableOpacity>

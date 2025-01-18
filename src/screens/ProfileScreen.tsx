@@ -129,7 +129,7 @@ const logoutHandler = async () => {
         
         <View style={styles.section}>
           <SettingsItem  title="My Cart" iconName="shopping-cart" onPress={() => navigation.navigate("CartScreen")} />
-          <SettingsItem  title="Transactions" iconName="payments"   />
+          <SettingsItem  title="Transactions" iconName="payments" onPress={() => {navigation.navigate('Transaction')}}   />
           <SettingsItem   iconName = "favorite" title="My Favorites" onPress={() => {navigation.navigate('Wish')}}  />
         </View>
 

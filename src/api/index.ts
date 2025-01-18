@@ -13,7 +13,9 @@ import {
   WishlistResponse,
   WishlistItem,
   User,
-  UserProfileUpdate
+  UserProfileUpdate,
+  Order,
+
 } from "../entities/Todo";
 import {
   useMutation,
@@ -25,7 +27,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuthStore } from "../store/auth/useAuthStore";
 
 // Base URL for the API
-const BASE_URL = "https://cba3-2a09-bac5-484-137d-00-1f1-1bd.ngrok-free.app";
+const BASE_URL = "https://03e1-2a09-bac5-49a-18c8-00-278-52.ngrok-free.app";
 const SSL = "http://192.168.0.105:3030"
 
 /**
@@ -55,7 +57,7 @@ const SSL = "http://192.168.0.105:3030"
 export const fetchTodos = async (query = ""): Promise<Todo[]> => {
   const allTodos: Todo[] = [];
   let currentPage = 1;
-  const pageSize = 100; // Adjust this value according to your API's pagination limit
+  const pageSize = 4; // Adjust this value according to your API's pagination limit
   let hasMorePages = true;
 
   try {
@@ -145,8 +147,9 @@ export const fetchProductById = async (
 //   }
 // };
 
-export const fetchBrandsProduct = async (
-  BrandID: number
+export const fetchBrandsPopularProduct = async (
+  BrandID: number,
+  include_popular: boolean = true
 ): Promise<BrandIDProduct[]> => {
   const allBrandProducts: BrandIDProduct[] = [];
   let currentPage = 1;
@@ -155,10 +158,68 @@ export const fetchBrandsProduct = async (
 
   try {
     while (currentPage < 10) {
-      // Request products for a specific brand and page
-      const response = await fetch(
-        `${BASE_URL}/brands/${BrandID}/products?page=${currentPage}&limit=${pageSize}`
-      );
+      // Construct URL using template literals
+      const url = `${BASE_URL}/brands/${BrandID}/products?page=${currentPage}&limit=${pageSize}&include_popular=${include_popular}`;
+
+      // Make the request
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch products by Brand ID: ${response.statusText}`
+        );
+      }
+
+      const responseData = await response.json();
+      if (!responseData || !Array.isArray(responseData.popular_products)) {
+        throw new Error(
+          `Unexpected API response format: ${JSON.stringify(responseData)}`
+        );
+      }
+
+      const brandPopularProducts: BrandIDProduct[] = responseData.popular_products;
+      console.log(`Fetched page ${currentPage} products:`, brandPopularProducts);
+
+      // Accumulate the products from the current page
+      allBrandProducts.push(...brandPopularProducts);
+
+      // Check if there are more pages
+      hasMorePages = responseData.hasNextPage; // Or check other fields like currentPage, totalPages
+      
+      // Break the loop if there are no more pages
+      if (!hasMorePages) {
+        break;
+      }
+      
+      currentPage++; // Move to the next page
+    }
+
+    console.log("Fetched all products for brand ID:", allBrandProducts);
+    return allBrandProducts;
+
+  } catch (error) {
+    console.error(`Error fetching products for Brand ID ${BrandID}:`, error);
+    throw error;
+  }
+};
+
+
+export const fetchBrandsProduct = async (
+  BrandID: number,
+  include_popular: boolean = true
+): Promise<BrandIDProduct[]> => {
+  const allBrandProducts: BrandIDProduct[] = [];
+  let currentPage = 1;
+  const pageSize = 20; // Adjust this according to the API's pagination limit
+  let hasMorePages = true;
+
+  try {
+    while (currentPage < 10) {
+      // Construct URL using template literals
+      const url = `${BASE_URL}/brands/${BrandID}/products?page=${currentPage}&limit=${pageSize}&include_popular=${include_popular}`;
+
+      // Make the request
+      const response = await fetch(url);
 
       if (!response.ok) {
         throw new Error(
@@ -179,8 +240,14 @@ export const fetchBrandsProduct = async (
       // Accumulate the products from the current page
       allBrandProducts.push(...brandProducts);
 
-      // Check if there are more pages (adjust based on API's pagination response)
+      // Check if there are more pages
       hasMorePages = responseData.hasNextPage; // Or check other fields like currentPage, totalPages
+      
+      // Break the loop if there are no more pages
+      if (!hasMorePages) {
+        break;
+      }
+      
       currentPage++; // Move to the next page
     }
 
@@ -192,7 +259,6 @@ export const fetchBrandsProduct = async (
     throw error;
   }
 };
-
 
 
 
@@ -754,4 +820,78 @@ export const useUpdateUserProfile = () => {
       console.error("Error updating user profile:", error);
     },
   });
+};
+
+
+//Order Creation:
+const createOrder = async (requestBody: { shipping_address: string; cart_id: number }) => {
+  const accessToken = useAuthStore.getState().refreshToken; // Get the access token from Zustand store
+  console.log('Access Token:', accessToken);
+
+  if (!accessToken) {
+    throw new Error('No access token found. Please log in again.');
+  }
+
+  try {
+    const response = await axios.post(`${BASE_URL}/orders`, requestBody, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`, // Add the access token to the Authorization header
+      },
+    });
+
+    console.log('API Response:', response.data); // Log the API response
+    return response.data; // Return the data from the API response
+  } catch (error) {
+    console.error('API Error:', error.response?.data || error.message); // Log the error
+    throw error; // Throw the error so it can be handled in the mutation
+  }
+};
+
+
+export const useCreateOrder = () => {
+  return useMutation({
+    mutationFn: (requestBody: { shipping_address: string; cart_id: number }) =>
+      createOrder(requestBody),
+    onSuccess: (data) => {
+      console.log('Order created successfully:', data); // Log success message
+    },
+    onError: (error) => {
+      console.error('Error creating order:', error); // Log error message
+    },
+  });
+};
+
+
+export const fetchOrders = async (query = ""): Promise<Order[]> => {
+  try {
+    // Construct the full URL with the query if provided
+    const refreshToken = useAuthStore.getState().refreshToken;
+    const url = `${BASE_URL}/orders${query ? `?query=${query}` : ''}`;
+
+    // Fetch data from the API
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    });
+
+    // Check for non-OK responses
+    if (!response.ok) {
+      throw new Error(`Failed to fetch orders: ${response.statusText}`);
+    }
+
+    // Parse the JSON response
+    const responseData = await response.json();
+
+    // Extract the orders array from the `data` field
+    const orders: Order[] = responseData.data || [];
+    console.log("Fetched orders:", orders);
+
+    return orders;
+  } catch (error) {
+    // Log and rethrow errors for higher-level handling
+    console.error("Error fetching orders:", error);
+    throw error;
+  }
 };

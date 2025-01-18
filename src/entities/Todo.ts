@@ -190,3 +190,43 @@ export interface Todo {
     email: string;
     full_name: string;
   }  
+
+  interface OrderItem {
+    id: number;
+    product_id: number;
+    quantity: number;
+    price: number;
+    subtotal: number;
+    product: Product;
+  }
+
+export interface Order {
+    id: number;
+    user_id: number;
+    total_amount: number;
+    status: string;
+    shipping_address: string;
+    created_at: string;
+    order_items: OrderItem[];
+  }
+
+  export interface PopularProduct {
+    price: number;
+    gender: string;
+    discount_percentage: number;
+    sizes: string[];
+    rating: number;
+    category_id: number;
+    stock: number;
+    brand_id: number;
+    product_id: number;
+    thumbnail: string;
+    id: number;
+    images: string[];
+    title: string;
+    is_published: boolean;
+    description: string;
+    created_at: string;
+    likes_count: number;
+    average_rating: number | null;
+  }

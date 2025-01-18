@@ -9,15 +9,17 @@ import Icons from "@expo/vector-icons/MaterialIcons";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { RootStackScreenProps } from "./RootNavigator";
 import CustomBottomTabs from "../components/CustomBottomTabs";
-import wishlist from "../screens/wishlist";
+import Wishlist from "../screens/wishlist";
 import BrandScreen from "../screens/BrandScreen";
 import Profile from "../screens/ProfileScreen";
+import SwipeScreen from "../screens/swipeScreen";
 
 export type TabsStackParamList = {
   Home: undefined;
   Wish: undefined;
   Brand: undefined;
   Profile: undefined;
+  Swipe : undefined
 };
 const TabsStack = createBottomTabNavigator<TabsStackParamList>();
 
@@ -48,11 +50,11 @@ const TabsNavigator = () => {
       
       <TabsStack.Screen
         name="Wish"
-        component={wishlist}
+        component={Wishlist}
         options={{
           headerShown: false,
           tabBarIcon(props) {
-            return <Icons name="shopping-cart" {...props} />;
+            return <Icons name="home" {...props} />;
           },
         }}
       />
@@ -67,6 +69,16 @@ const TabsNavigator = () => {
         }}
       />
       <TabsStack.Screen
+        name="Swipe"
+        component={SwipeScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon(props) {
+            return <Icons name="person" {...props} />;
+          },
+        }}
+      />
+      <TabsStack.Screen
         name="Profile"
         component={Profile}
         options={{
@@ -76,6 +88,8 @@ const TabsNavigator = () => {
           },
         }}
       />
+
+
     </TabsStack.Navigator>
   );
 };

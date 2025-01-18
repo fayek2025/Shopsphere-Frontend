@@ -40,7 +40,7 @@ const OnboardingScreen = ({navigation} : RootStackScreenProps<"onBoarding">) => 
             <Text style={styles.mainText}>
               Discover Endless{"\n"}
               Possibilities with{" "}
-              <Text style={styles.highlightText}>Aora</Text>
+              <Text style={styles.highlightText}>ShopSphere</Text>
             </Text>
 
             <Image
@@ -52,7 +52,7 @@ const OnboardingScreen = ({navigation} : RootStackScreenProps<"onBoarding">) => 
 
           <Text style={styles.subtitle}>
             Where Creativity Meets Innovation: Embark on a Journey of Limitless
-            Exploration with Aora
+            Exploration with ShopSphere
           </Text>
 
            <TouchableOpacity onPress={handleLogin} style={styles.button}>

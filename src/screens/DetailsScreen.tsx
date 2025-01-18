@@ -134,6 +134,11 @@ const handleFavourite = (productId: number) => {
               borderRadius: 52,
               borderWidth: 1,
               borderColor: "#fff",
+              backgroundColor: "white",
+              shadowColor: '#000', // Adds shadow for iOS
+        shadowOffset: { width: 4, height: 4 },
+        shadowOpacity: 1,
+        shadowRadius: 4,
             }}
           >
             <Icons name="arrow-back" size={24} color={"black"} />
@@ -148,6 +153,11 @@ const handleFavourite = (productId: number) => {
               borderRadius: 52,
               borderWidth: 1,
               borderColor: "#fff",
+              backgroundColor: "white",
+              shadowColor: '#000', // Adds shadow for iOS
+        shadowOffset: { width: 4, height: 4 },
+        shadowOpacity: 1,
+        shadowRadius: 4,
             }}
             onPress={() =>{
               handleFavourite(id);
@@ -166,9 +176,15 @@ const handleFavourite = (productId: number) => {
               borderRadius: 52,
               borderWidth: 1,
               borderColor: "#fff",
+              backgroundColor: "white",
+              shadowColor: '#000', // Adds shadow for iOS
+        shadowOffset: { width: 4, height: 4 },
+        shadowOpacity: 1,
+        shadowRadius: 4,
             }}
+            onPress={() => {navigation.navigate('CartScreen')}}
           >
-            <Icons name="add-shopping-cart" size={24} color={"#fff"} />
+            <Icons name="add-shopping-cart" size={24} color={"#000"} />
           </TouchableOpacity>
         </View>
       </SafeAreaView>
