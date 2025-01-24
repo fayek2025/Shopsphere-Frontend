@@ -27,7 +27,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuthStore } from "../store/auth/useAuthStore";
 
 // Base URL for the API
-const BASE_URL = "https://03e1-2a09-bac5-49a-18c8-00-278-52.ngrok-free.app";
+const BASE_URL = "https://4e17-2a09-bac5-49f-25c3-00-3c3-30.ngrok-free.app";
 const SSL = "http://192.168.0.105:3030"
 
 /**

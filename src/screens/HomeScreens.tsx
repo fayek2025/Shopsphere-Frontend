@@ -19,6 +19,7 @@ import { Todo , User } from '../entities/Todo'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../store/auth/useAuthStore'
 import ProductListItem from '../components/ProductListItem'
+import BottomSheets from '../components/BottomSheetModal'
 
 
 const MESONARY_LIST_DATA = [
@@ -114,9 +115,6 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
   }, []);
 
   const snapPoints = useMemo(() => ['85%', '95%'], []);
-  const handleSheetChanges = useCallback((index: number) => {
-    console.log('handleSheetChanges', index);
-  }, []);
 
 
 
@@ -360,241 +358,22 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
 
 
         </View>
-        <FlatList
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
+        
+        
+          <Text 
+          style = {{
+            fontSize: 24,
+            fontWeight: '700',
             paddingHorizontal: 24,
-            gap: 12,
+           
+            color: colors.text
           }}
-          data={Categoris}
-          renderItem={({ item, index }) => {
-            const isSelected = categoryIndex === index;
+          
+          >
+            Featured Products
+          </Text>
+        
 
-            return (
-              <TouchableOpacity
-                style={{
-                  paddingHorizontal: 12,
-                  height: 40,
-                  borderRadius: 52,
-                  backgroundColor: isSelected ? colors.primary :
-                    "white",
-                  borderWidth: isSelected ? 0 : 1,
-                  borderColor: colors.border,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-
-                }}
-
-                onPress={() => setCategoryIndex(index)}
-              >
-                <Text
-                  style={{
-                    color: isSelected ? 'white' : colors.text,
-                    fontWeight: '600',
-                    paddingHorizontal: 24,
-                    paddingVertical: 8,
-
-                  }}
-                >{item}</Text>
-              </TouchableOpacity>
-
-            )
-          }
-
-
-          }
-
-        />
-
-        {/* // Masonry List Section */}
-        {/* <MasonryList
-  data={MESONARY_LIST_DATA}
-  keyExtractor={(item) => item.id}
-  contentContainerStyle = {{
-    paddingHorizontal : 24,
-    gap: 12,
-  }}
-  numColumns={2}
-  showsVerticalScrollIndicator={false}
-  renderItem={({item , i} : any) => {
-
-    const isSelected = selectMansory === i;
-
-    return (
-      <TouchableOpacity
-      onPress={() => navigation.navigate('Details', {
-          id: item.product_id,
-          imageUrl: item.thumbnail,
-          title: item.title,
-         
-      })}
-      
-      >
-        <View 
-        style = {{
-            padding: 6
-        }} >
-        <View
-        style = {{
-            paddingHorizontal: 12,
-            paddingVertical: 12,
-            aspectRatio : i  === 0 ? 1 : 2/3,
-            borderRadius: 24,
-            position: 'relative',
-            overflow : 'hidden',
-           padding: 12,
-        }}
-        >
-            <Image source={{uri: item.thumbnail}} 
-            style = {[StyleSheet.absoluteFillObject , {
-                borderRadius: 24,
-                paddingHorizontal: 12,
-                paddingVertical: 12,
-                
-            }]}
-            
-            />
-    
-            <View style = {[StyleSheet.absoluteFillObject  , {
-                padding : 12
-            }]
-                
-            }>
-    
-                <View
-                style = {{ 
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    gap: 12,
-                    
-                    
-                }}
-                >
-    
-                    <Text style = {{
-                        fontSize: 16,
-                        fontWeight: '600',
-                        color: colors.primary,
-                        
-                        flex: 1,
-                        
-                    }}>
-    
-                       {item.title}
-    
-                    </Text>
-    
-                    <TouchableOpacity 
-                    style = {{
-                        padding: 8,
-                        borderRadius: 52,
-                        backgroundColor: isSelected ? colors.primary : colors.card,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                       
-                       
-
-                    }}
-                    onPress={() => {
-                        if(isSelected){
-                            setSelectMansory(null);
-                            console.log("Unselected");
-                            handleFavourite(item.product_id);
-                            return;
-                        }
-                        setSelectMansory(i);
-                        console.log("Selected");
-                        console.log(i);
-
-                    }
-                        
-                    }
-                    >
-    
-                    
-                    <Icons name="favorite" size={24} color={isSelected ? "red" : colors.text} />
-                    </TouchableOpacity>
-
-
-                    
-    
-                </View>
-
-               
-
-               
-    
-            </View>
-
-            <View style ={{flex : 1 ,
-                justifyContent: 'flex-end',
-               
-               
-            }}>
-                    <BlurView intensity={50} 
-                   tint='dark'
-                    style = {{
-
-                flexDirection: "row",
-            backgroundColor: "rgba(0,0,0,0.25)",
-            
-            alignItems: "center",
-            padding: 6,
-            borderRadius: 100,
-            overflow: "hidden",
-
-                     }}>
-                         <Text
-                      style={{
-                        flex: 1,
-                        fontSize: 16,
-                        fontWeight: "600",
-                        color: "#fff",
-                        alignItems: 'center',
-                        padding: 6,
-                        
-                      }}
-                      numberOfLines={1}
-
-                    >
-                      $ {item.price}
-                    </Text>
-
-                    <TouchableOpacity
-                    style ={{
-                        paddingHorizontal: 16,
-                        paddingVertical: 8,
-                        backgroundColor: "#fff",
-                        borderRadius: 52,
-                    }}
-                    >
-                        <Icons name="add-shopping-cart" size={24} color="black" />
-                    </TouchableOpacity>
-                    </BlurView>
-
-            </View>
-            
-
-            
-       
-            </View>
-
-            </View>
-
-            </TouchableOpacity>
-
-            
-    )
-        }
-    
-  }
-  
-  
-  onEndReachedThreshold={0.1}
- 
-/> */}
 
         <ProductListItem
           data={todos}
@@ -639,6 +418,8 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
 
           </BottomSheetScrollView>
         </BottomSheetModal>
+
+       
 
 
 

@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Image ,FlatList } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState , useRef , useCallback , useMemo } from 'react'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { RootStackScreenProps } from '../navigators/RootNavigator'
 import Icons from '@expo/vector-icons/MaterialIcons'
@@ -16,55 +16,10 @@ import ProductListItem from '../components/ProductListItem'
 import { fetchBrandsPopularProduct } from '../api'
 import PopularProduct from '../components/popular_Product'
 import { ScrollView } from 'react-native-gesture-handler'
-
-
-const Categoris = [ 
-    "Clothing",
-    "Shoes",
-    "Accessories",
-    "Jewellery",
-    "Beauty",
-    "Home",
-    "Electronics",
-]
-
-const MESONARY_LIST_DATA = [
-    {
-      imageUrl:
-        "https://images.unsplash.com/photo-1521577352947-9bb58764b69a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=986&q=80",
-      title: "PUMA Everyday Hussle",
-      price: 160,
-      description : "This is a description"
-    },
-    {
-      imageUrl:
-        "https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80",
-      title: "PUMA Everyday Hussle",
-      price: 180,
-      description : "This is a description"
-    },
-    {
-      imageUrl:
-        "https://images.unsplash.com/photo-1556217477-d325251ece38?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1020&q=80",
-      title: "PUMA Everyday Hussle",
-      price: 200,
-      description : "This is a description"
-    },
-    {
-      imageUrl:
-        "https://images.unsplash.com/photo-1554568218-0f1715e72254?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80",
-      title: "PUMA Everyday Hussle",
-      price: 180,
-      description : "This is a description"
-    },
-    {
-      imageUrl:
-        "https://images.unsplash.com/photo-1627225924765-552d49cf47ad?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80",
-      title: "PUMA Everyday Hussle",
-      price: 120,
-      description : "This is a description"
-    },
-  ];
+import BottomSheet, { BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
+import BottomSheetModal from '@gorhom/bottom-sheet'
+import CustomBackdrop from '../components/CustomBackdrop'
+import FilterView from '../components/FilterView'
 
 
 const BrandDetailScreens = ({
@@ -101,6 +56,24 @@ const BrandDetailScreens = ({
     staleTime: Infinity,
   })
 
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const [isModalVisible, setIsModalVisible] = useState(true);
+
+  // callbacks
+  const openFilterModal = useCallback(() => {
+    setIsModalVisible(true);
+    bottomSheetRef.current?.expand();
+    console.log("Open Filter Modal");
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalVisible(false);
+    bottomSheetRef.current?.close();
+  }, []);
+
+  const snapPoints = useMemo(() => ['85%', '95%'], []);
+
+
   console.log("Popular:", popular);
   const handleSelect = (index: number) => {
     if (isSelected === index) {
@@ -128,255 +101,38 @@ const BrandDetailScreens = ({
           }}
         />
         <TopBar handlePress={handlePress} />
+       
       </View>
 
-      {/* Chips Section */}
-     <View
-     style ={{
-        height: 60,
-        paddingVertical : 12,
-     }}
-     
-     >
-
-     <FlatList 
-                 horizontal
-                 showsHorizontalScrollIndicator={false}
-                 contentContainerStyle = {{ 
-                     paddingHorizontal: 24,
-                     gap: 12,
-                 }}
-                 data={Categoris}
-                 renderItem={({item , index}) => {
-                     const isSelected = categoryIndex === index;
-                     
-                     return (
-                         <TouchableOpacity
-                         style = {{
-                             paddingHorizontal: 12,
-                             borderRadius: 52,
-                             backgroundColor: isSelected ? colors.primary : 
-                             "white" ,
-                             borderWidth: isSelected ? 0 : 1,
-                             borderColor: colors.border,
-                             justifyContent: 'center',
-                             
-                         }}
-                         
-                         onPress={() => setCategoryIndex(index)} 
-                         >
-                         <Text
-                             style = {{ 
-                                 color: isSelected ? 'white' : colors.text,
-                                 fontWeight: '600',
-                                 paddingHorizontal: 24,
-                                 paddingVertical: 8,
-     
-                             }}
-                         >{item}</Text>
-                     </TouchableOpacity>
-     
-                     )
-                 }
-                     
-                     
-                 }
-     
-                 />
-     </View>
-
-               {/* // Masonry List Section */}
-               {/* <MasonryList
-  data={Brandproduct}
-  keyExtractor={(item) => item.id}
-  contentContainerStyle = {{
-    paddingHorizontal : 24,
-    gap: 12,
-  }}
-  numColumns={2}
-  showsVerticalScrollIndicator={false}
-  renderItem={({item , i} : any) => {
-
-    const isSelected = selectMansory === i;
-
-    return (
-        <TouchableOpacity
-        onPress={() => {
-                navigation.navigate('Details', {
-                    id: item.product_id,
-                    imageUrl: item.imageUrl,
-                    title: item.title,
-                    price: item.price.toString(),
-                    description: item.description
-                })
-        }}
-        >
-
-       
-        <View 
-        style = {{
-            padding: 6
-        }} >
-        <View
-        style = {{
-            paddingHorizontal: 12,
-            paddingVertical: 12,
-            aspectRatio : i  === 0 ? 1 : 2/3,
-            borderRadius: 24,
-            position: 'relative',
-            overflow : 'hidden',
-           padding: 12,
-        }}
-        >
-            <Image source={{uri: item.thumbnail}} 
-            style = {[StyleSheet.absoluteFillObject , {
-                borderRadius: 24,
-                paddingHorizontal: 12,
-                paddingVertical: 12,
-                
-            }]}
-            
-            />
-    
-            <View style = {[StyleSheet.absoluteFillObject  , {
-                padding : 12
-            }]
-                
-            }>
-    
-                <View
-                style = {{ 
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    gap: 12,
-                    
-                    
-                }}
-                >
-    
-                    <Text style = {{
-                        fontSize: 16,
-                        fontWeight: '600',
-                        color: colors.primary,
-                        
-                        flex: 1,
-                        
-                    }}>
-    
-                       {item.title}
-    
-                    </Text>
-    
-                    <TouchableOpacity 
-                    style = {{
-                        padding: 8,
-                        borderRadius: 52,
-                        backgroundColor: isSelected ? colors.primary : colors.card,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                       
-                       
-
-                    }}
-                    onPress={() => {
-                        if(isSelected){
-                            setSelectMansory(null);
-                            console.log("Unselected");
-                            return;
-                        }
-                        setSelectMansory(i);
-                        console.log("Selected");
-                        console.log(i);
-
-                    }
-                        
-                    }
-                    >
-    
-                    
-                    <Icons name="favorite" size={24} color={isSelected ? "red" : colors.text} />
-                    </TouchableOpacity>
-
-
-                    
-    
-                </View>
-
-               
-
-               
-    
-            </View>
-
-            <View style ={{flex : 1 ,
-                justifyContent: 'flex-end',
-               
-               
-            }}>
-                    <BlurView intensity={50} 
-                   tint='dark'
-                    style = {{
-
-                flexDirection: "row",
-            backgroundColor: "rgba(0,0,0,0.25)",
-            
-            alignItems: "center",
-            padding: 6,
-            borderRadius: 100,
-            overflow: "hidden",
-
-                     }}>
-                         <Text
-                      style={{
-                        flex: 1,
-                        fontSize: 16,
-                        fontWeight: "600",
-                        color: "#fff",
-                        alignItems: 'center',
-                        padding: 6,
-                        
-                      }}
-                      numberOfLines={1}
-
-                    >
-                      ${item.price}
-                    </Text>
-
-                    <TouchableOpacity
-                    style ={{
-                        paddingHorizontal: 16,
-                        paddingVertical: 8,
-                        backgroundColor: "#fff",
-                        borderRadius: 52,
-                    }}
-                    >
-                        <Icons name="add-shopping-cart" size={24} color="black" />
-                    </TouchableOpacity>
-                    </BlurView>
-
-            </View>
-            
-
-            
-       
-            </View>
-
-            </View>
-            </TouchableOpacity>
-
-            
-    )
-        }
-    
-  }
-  
-  
-  onEndReachedThreshold={0.1}
- 
-/> */}
-
+          
+             
       <ScrollView>
+
+        <View>
+
+        <TouchableOpacity
+            style={{
+              backgroundColor: colors.primary,
+              padding: 8,
+              borderRadius: 52,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderColor: colors.border,
+              borderWidth: 1,
+              aspectRatio: 1,
+              width: 40,
+              height: 40,
+
+
+
+            }}
+            onPress={openFilterModal}
+          >
+
+            <Icons name="tune" size={24} color="white" />
+          </TouchableOpacity>
+
+        </View>
 
   <Text style = {{
     fontSize: 20,
@@ -417,6 +173,43 @@ const BrandDetailScreens = ({
 />
 
 </ScrollView>
+
+<BottomSheetModal
+          snapPoints={snapPoints}
+          index={-1}
+          ref={bottomSheetRef}
+          onChange={
+            (index) => {
+
+              console.log("Current State" + " " + index);
+              if (index === 0) {
+                // Programmatically dismiss when swiped down
+                bottomSheetRef.current?.close();
+                console.log(index);
+              }
+            }
+
+
+          }
+          enablePanDownToClose={true}
+
+          backdropComponent={(props) => <CustomBackdrop {...props} />}
+          backgroundStyle={{
+            borderRadius: 24,
+            backgroundColor: colors.card,
+          }}
+          handleIndicatorStyle={{
+            backgroundColor: colors.primary,
+          }}
+        >
+          <BottomSheetScrollView style={{ flex: 1 }}>
+
+            <FilterView handleCloseModal={handleCloseModal} />
+
+
+
+          </BottomSheetScrollView>
+        </BottomSheetModal>
     </View>
     
   );
