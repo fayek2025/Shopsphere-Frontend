@@ -4,10 +4,19 @@ import MasonryList from 'reanimated-masonry-list';
 import { useTheme } from '@react-navigation/native';
 
 type ProductListItemProps = { 
-    navigation?: any;
+    navigation: any;
     handleFavourite?: (id: number) => void;
     data?: any[];
-};
+  };
+
+type Product = {
+    id: string | number;
+    product_id: string | number;
+    thumbnail: string;
+    title: string;
+    description: string;
+    price: number;
+  };
 
 const ProductListItem = ({ navigation, data }: ProductListItemProps) => {
     const { colors } = useTheme();
@@ -31,12 +40,12 @@ const ProductListItem = ({ navigation, data }: ProductListItemProps) => {
                     }
                 >
                     {/* Image Section */}
-                    <Image
+                    {/* <Image
                         source={{ uri: item.thumbnail }}
                         style={[ styles.productImage]}
                         resizeMode="cover"
                         loading = "eager"
-                    />
+                    /> */}
 
                     {/* Text Content Section */}
                     <View style={styles.textContent}>

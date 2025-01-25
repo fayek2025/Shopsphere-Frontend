@@ -15,6 +15,8 @@ import {
   User,
   UserProfileUpdate,
   Order,
+  SearchRequest,
+  SearchResponse
 
 } from "../entities/Todo";
 import {
@@ -27,45 +29,24 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuthStore } from "../store/auth/useAuthStore";
 
 // Base URL for the API
-const BASE_URL = "https://4e17-2a09-bac5-49f-25c3-00-3c3-30.ngrok-free.app";
+const BASE_URL = "https://591c-2a09-bac5-49b-1028-00-19c-16e.ngrok-free.app";
 const SSL = "http://192.168.0.105:3030"
 
-/**
- * Fetches all products (todos) from the API.
- * Extracts the `data` field from the API response.
- */
-// export const fetchTodos = async (query = ""): Promise<Todo[]> => {
-//   try {
-//     const response = await fetch(`${BASE_URL}/products/`);
-//     if (!response.ok) {
-//       throw new Error(`Failed to fetch todos: ${response.statusText}`);
-//     }
 
-//     const responseData = await response.json();
-
-//     // Extract the `data` field containing the todos array
-//     const todos: Todo[] = responseData.data || [];
-//     console.log("Fetched todos (products):", todos);
-
-//     return todos;
-//   } catch (error) {
-//     console.error("Error fetching todos:", error);
-//     throw error;
-//   }
-// };
 
 export const fetchTodos = async (query = ""): Promise<Todo[]> => {
   const allTodos: Todo[] = [];
   let currentPage = 1;
-  const pageSize = 4; // Adjust this value according to your API's pagination limit
+  const pageSize = 10; // Adjust this value according to your API's pagination limit
   let hasMorePages = true;
 
   try {
-    while (currentPage <5) {
+    while (currentPage <= 10) {
       const response = await fetch(
         `${BASE_URL}/products?page=${currentPage}&limit=${pageSize}&query=${query}`
       );
 
+     
       if (!response.ok) {
         throw new Error(`Failed to fetch todos: ${response.statusText}`);
       }
@@ -118,34 +99,7 @@ export const fetchProductById = async (
   }
 };
 
-// export const fetchBrandsProduct = async (
-//   BrandID: number
-// ): Promise<BrandIDProduct[]> => {
-//   try {
-//     const response = await fetch(`${BASE_URL}/brands/${BrandID}/products`);
-//     if (!response.ok) {
-//       throw new Error(
-//         `Failed to fetch products by Brand ID: ${response.statusText}`
-//       );
-//     }
 
-//     const responseData = await response.json();
-//     if (!responseData || !Array.isArray(responseData.data)) {
-//       throw new Error(
-//         `Unexpected API response format: ${JSON.stringify(responseData)}`
-//       );
-//     }
-
-//     // Extract the `data` field containing the product
-//     const Brandproduct: BrandIDProduct[] = responseData.data;
-//     console.log("Fetched product by ID:", Brandproduct);
-
-//     return Brandproduct;
-//   } catch (error) {
-//     console.error(`Error fetching product with ID ${BrandID}:`, error);
-//     throw error;
-//   }
-// };
 
 export const fetchBrandsPopularProduct = async (
   BrandID: number,
@@ -260,6 +214,47 @@ export const fetchBrandsProduct = async (
   }
 };
 
+// export const fetchBrandsProduct = async (
+//   BrandID: number,
+//   include_popular: boolean = true
+// ): Promise<BrandIDProduct[]> => {
+//   const allBrandProducts: BrandIDProduct[] = [];
+//   let currentPage = 1;
+//   const pageSize = 20; // Adjust this according to the API's pagination limit
+
+//   try {
+//     while (true) {
+//       const url = `${BASE_URL}/brands/${BrandID}/products?page=${currentPage}&limit=${pageSize}&include_popular=${include_popular}`;
+
+//       const response = await fetch(url);
+
+//       if (!response.ok) {
+//         throw new Error(`Failed to fetch products: ${response.statusText}`);
+//       }
+
+//       const responseData = await response.json();
+//       const brandProducts: BrandIDProduct[] = responseData.data || [];
+
+//       if (brandProducts.length === 0) {
+//         break;
+//       }
+
+//       allBrandProducts.push(...brandProducts);
+
+//       if (!responseData.hasNextPage) {
+//         break;
+//       }
+
+//       currentPage++;
+//     }
+
+//     return allBrandProducts;
+
+//   } catch (error) {
+//     console.error(`Error fetching products for Brand ID ${BrandID}:`, error);
+//     throw error;
+//   }
+// };
 
 
 /**
@@ -894,4 +889,90 @@ export const fetchOrders = async (query = ""): Promise<Order[]> => {
     console.error("Error fetching orders:", error);
     throw error;
   }
+};
+
+export const searchProductsByText = async (searchData: SearchRequest): Promise<SearchResponse> => {
+  try {
+    const formData = new URLSearchParams();
+    formData.append('text_query', searchData.text_query);
+
+    const response = await axios.post(`${BASE_URL}/search/text`, formData, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.detail || 'Search operation failed');
+    }
+    throw new Error('An unexpected error occurred');
+  }
+};
+
+export const useSearchProductsByText = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<SearchResponse, Error, SearchRequest>({
+    mutationFn: searchProductsByText,
+    onSuccess: (data) => {
+      console.log('Search completed successfully:', data.message);
+      if (data.data.length === 0) {
+        console.log('No matching products found');
+      } else {
+        console.log('Products retrieved:', data.data.length);
+      }
+      queryClient.invalidateQueries(['products']);
+    },
+    onError: (error) => {
+      console.error('Search error:', error.message);
+    },
+  });
+};
+
+
+
+
+
+
+export const searchProductsByImage = async (image: File): Promise<SearchResponse> => {
+  try {
+    const formData = new FormData();
+    formData.append('image', image);
+
+    const response = await axios.post(`${BASE_URL}/search/image`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.detail || 'Search operation failed');
+    }
+    throw new Error('An unexpected error occurred');
+  }
+};
+
+
+export const useSearchProductsByImage = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<SearchResponse, Error, File>({
+    mutationFn: searchProductsByImage,
+    onSuccess: (data) => {
+      console.log('Search completed successfully:', data.message);
+      if (data.data.length === 0) {
+        console.log('No matching products found');
+      } else {
+        console.log('Products retrieved:', data.data.length);
+      }
+      queryClient.invalidateQueries(['products']);
+    },
+    onError: (error) => {
+      console.error('Search error:', error.message);
+    },
+  });
 };

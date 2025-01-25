@@ -16,6 +16,7 @@ import signUp from '../screens/signUp'
 import OnboardingScreen from '../screens/OnboardingScreen'
 import { useAuthStore } from '../store/auth/useAuthStore'
 import Transaction from '../screens/Transaction'
+import SearchScreen from '../screens/SearchScreen'
 
 export type RootStackParamList = {
     TabsStack: NavigatorScreenParams<TabsStackParamList>;
@@ -48,6 +49,7 @@ export type RootStackParamList = {
       username: string;
     };
     Transaction : undefined;
+    SearchScreen: undefined;
    
     
 }
@@ -82,6 +84,7 @@ const RootNavigator = () => {
           <RootStack.Screen name="confirmScreen" component={confirmScreen} />
           <RootStack.Screen name="EditProfile" component={EditProfile} />
           <RootStack.Screen name = "Transaction" component={Transaction} />
+          <RootStack.Screen name = "SearchScreen" component={SearchScreen} />
         </>
       )}
     </RootStack.Navigator>

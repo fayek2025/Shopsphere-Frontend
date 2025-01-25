@@ -230,3 +230,18 @@ export interface Order {
     likes_count: number;
     average_rating: number | null;
   }
+
+  export interface PaginatedResponse {
+    data: BrandIDProduct[];
+    hasNextPage: boolean;
+    currentPage: number;
+    totalPages: number;
+  }
+
+ export interface SearchRequest {
+  text_query: string;
+}
+ export interface SearchResponse {
+  message: string;
+  data: string[];
+}

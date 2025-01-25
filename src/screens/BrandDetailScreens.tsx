@@ -7,16 +7,15 @@ import { useTheme } from '@react-navigation/native'
 import { StyleSheet } from 'react-native'
 import { StatusBar } from 'react-native'
 import TopBar from '../components/TopBar'
-import Chip from '../components/Chip'
-import MasonryList from 'reanimated-masonry-list';
-import { BlurView } from 'expo-blur';
+
+
 import { fetchBrandsProduct } from '../api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import ProductListItem from '../components/ProductListItem'
 import { fetchBrandsPopularProduct } from '../api'
 import PopularProduct from '../components/popular_Product'
 import { ScrollView } from 'react-native-gesture-handler'
-import BottomSheet, { BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
+import  { BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import BottomSheetModal from '@gorhom/bottom-sheet'
 import CustomBackdrop from '../components/CustomBackdrop'
 import FilterView from '../components/FilterView'
@@ -28,9 +27,7 @@ const BrandDetailScreens = ({
 }: RootStackScreenProps<"BrandScreenDetails">) => {
   const [isSelected, setIsSelected] = React.useState<number | null>
   (null);
-  const [selectMansory, setSelectMansory] = useState<number | null>(null);
-  
-  const [categoryIndex , setCategoryIndex] = React.useState(0);
+
   const { colors } = useTheme();
 
   const { data: Brandproduct=[] } = useQuery({
@@ -108,7 +105,15 @@ const BrandDetailScreens = ({
              
       <ScrollView>
 
-        <View>
+        <View 
+          style ={{
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            padding: 12,
+            borderBottomColor: colors.border,
+            backgroundColor: colors.card,
+          }}
+        >
 
         <TouchableOpacity
             style={{
@@ -121,7 +126,7 @@ const BrandDetailScreens = ({
               borderWidth: 1,
               aspectRatio: 1,
               width: 40,
-              height: 40,
+              height: 60,
 
 
 
@@ -129,7 +134,7 @@ const BrandDetailScreens = ({
             onPress={openFilterModal}
           >
 
-            <Icons name="tune" size={24} color="white" />
+            <Icons name="tune" size={18} color="white" />
           </TouchableOpacity>
 
         </View>
@@ -139,8 +144,6 @@ const BrandDetailScreens = ({
     fontWeight: '600',
     color: colors.text,
     padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
     backgroundColor: colors.card,
   }}
   >Popular Products</Text>
@@ -160,8 +163,6 @@ const BrandDetailScreens = ({
     fontWeight: '600',
     color: colors.text,
     padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
     backgroundColor: colors.card,
   }}>
     All Products
@@ -204,7 +205,7 @@ const BrandDetailScreens = ({
         >
           <BottomSheetScrollView style={{ flex: 1 }}>
 
-            <FilterView handleCloseModal={handleCloseModal} />
+            <FilterView  />
 
 
 

@@ -56,7 +56,7 @@ const SwipeScreen: React.FC<SwipeScreenProps> = () => {
       setLoading(true);
       setPreviousCards(products); // Store the current products before fetching new ones
       const response = await axios.get(
-        "https://4e17-2a09-bac5-49f-25c3-00-3c3-30.ngrok-free.app/feedback/swipe?limit=10",
+        "https://591c-2a09-bac5-49b-1028-00-19c-16e.ngrok-free.app/feedback/swipe?limit=10",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -84,7 +84,7 @@ const SwipeScreen: React.FC<SwipeScreenProps> = () => {
   const handleFeedback = async (productId: number, liked: boolean) => {
     try {
       await axios.post(
-        "https://4e17-2a09-bac5-49f-25c3-00-3c3-30.ngrok-free.app/feedback",
+        "https://591c-2a09-bac5-49b-1028-00-19c-16e.ngrok-free.app/feedback",
         {
           product_id: productId,
           liked: liked,

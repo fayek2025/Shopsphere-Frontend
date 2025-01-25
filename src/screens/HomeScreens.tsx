@@ -96,25 +96,13 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
   })
   console.log(todos);
   const { colors } = useTheme();
-  const [categoryIndex, setCategoryIndex] = React.useState(0)
-  const [selectMansory, setSelectMansory] = useState<number | null>(null);
+
 
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const [isModalVisible, setIsModalVisible] = useState(true);
+  
 
-  // callbacks
-  const openFilterModal = useCallback(() => {
-    setIsModalVisible(true);
-    bottomSheetRef.current?.expand();
-    console.log("Open Filter Modal");
-  }, []);
 
-  const handleCloseModal = useCallback(() => {
-    setIsModalVisible(false);
-    bottomSheetRef.current?.close();
-  }, []);
 
-  const snapPoints = useMemo(() => ['85%', '95%'], []);
 
 
 
@@ -234,6 +222,7 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
 
 
             }}
+            onPress={() => navigation.navigate('SearchScreen')}
           >
 
             <Icons name="search" size={24} color={colors.text}
@@ -253,25 +242,7 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
 
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={{
-              backgroundColor: colors.primary,
-              padding: 8,
-              borderRadius: 52,
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderColor: colors.border,
-              borderWidth: 1,
-              aspectRatio: 1
-
-
-
-            }}
-            onPress={openFilterModal}
-          >
-
-            <Icons name="tune" size={24} color="white" />
-          </TouchableOpacity>
+         
 
 
         </View>
@@ -382,42 +353,7 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
 
         />
 
-        <BottomSheetModal
-          snapPoints={snapPoints}
-          index={-1}
-          ref={bottomSheetRef}
-          onChange={
-            (index) => {
-
-              console.log("Current State" + " " + index);
-              if (index === 0) {
-                // Programmatically dismiss when swiped down
-                bottomSheetRef.current?.close();
-                console.log(index);
-              }
-            }
-
-
-          }
-          enablePanDownToClose={true}
-
-          backdropComponent={(props) => <CustomBackdrop {...props} />}
-          backgroundStyle={{
-            borderRadius: 24,
-            backgroundColor: colors.card,
-          }}
-          handleIndicatorStyle={{
-            backgroundColor: colors.primary,
-          }}
-        >
-          <BottomSheetScrollView style={{ flex: 1 }}>
-
-            <FilterView handleCloseModal={handleCloseModal} />
-
-
-
-          </BottomSheetScrollView>
-        </BottomSheetModal>
+     
 
        
 
