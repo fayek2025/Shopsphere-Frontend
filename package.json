@@ -32,6 +32,9 @@
     "react-native-gesture-handler": "^2.21.2",
     "react-native-keychain": "^9.2.2",
     "react-native-reanimated": "^3.16.4",
+    "react-native-reanimated-carousel": "^3.5.1",
+    "react-native-snap-carousel": "^3.9.1",
+    "react-native-swiper": "^1.6.0",
     "reanimated-masonry-list": "^1.0.1",
     "sslcommerz-lts": "^1.1.0",
     "yup": "^1.6.1",
@@ -42,6 +45,7 @@
     "@react-navigation/native-stack": "^7.1.14",
     "@tanstack/eslint-plugin-query": "^5.62.1",
     "@types/react": "~18.3.12",
+    "@types/react-native-snap-carousel": "^3.8.11",
     "tailwindcss": "^3.3.2",
     "typescript": "^5.3.3"
   },

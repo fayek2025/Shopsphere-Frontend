@@ -109,7 +109,7 @@ const Wishlist = ({ navigation }: TabsStackScreenProps<'Wish'>) => {
             <WishListItem
               title={item.product?.title}
               totalPrice={item.product?.price}
-              imageUri={item.thumbnail}
+              imageUri={item.product?.thumbnail}
               onRemove={() => handleDelete(item?.product_id)}
             />
           </TouchableOpacity>

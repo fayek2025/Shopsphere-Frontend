@@ -1,24 +1,35 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native'
-import React , {useState}from 'react'
+import { View, Text, TouchableOpacity, Image, Dimensions } from 'react-native'
+import React , {useState , useEffect , useRef}from 'react'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { RootStackScreenProps } from '../navigators/RootNavigator'
 import Icons from '@expo/vector-icons/MaterialIcons'
 import { useTheme } from '@react-navigation/native'
 import { StyleSheet } from 'react-native'
 import { StatusBar } from 'react-native'
-import { fetchProductById , useCreateCart, useCreateWishlist } from '../api'
+import { fetchProductById , useCreateCart, useCreateWishlist , useDeleteWishlistItem } from '../api'
 import BottomSheet, { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import useFavoriteStore from '../store/useFavorite.ts/useFavourite'
 import { Alert } from 'react-native'
+import Swiper from 'react-native-deck-swiper'
+import Carousel from 'react-native-reanimated-carousel';
 
 
 
-import { clamp } from 'react-native-reanimated'
+const viewportWidth = Dimensions.get('window').width;
+const viewportHeight = Dimensions.get('window').height;
+
   const URL = 'https://images.unsplash.com/photo-1491756975177-a13d74ed1e2f?q=80&w=2030&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
 
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "3XL"];
 const DetailsScreen = ({navigation , route: {params : {id , imageUrl ,title }}} : RootStackScreenProps<"Details">) => {
-  const { mutate: createWishlistItem } = useCreateWishlist();
+  const carouselRef = useRef(null);
+  const createWishlistMutation = useCreateWishlist();
+  const fetchAndSetFavorites = useFavoriteStore((state) => state.fetchAndSetFavorites);
+  useEffect(() => {
+    fetchAndSetFavorites();
+  }, [fetchAndSetFavorites]);
+  const [selected , setSelected] = useState(false);
   const { data: product, isLoading, isError, error } = useQuery({
     queryKey: ['todos', id],
     queryFn: () => {
@@ -29,6 +40,29 @@ const DetailsScreen = ({navigation , route: {params : {id , imageUrl ,title }}} 
     },
     staleTime: Infinity,
   })
+
+  // const createWishlistMutation = useCreateWishlist();
+  // const deleteWishlistMutation = useDeleteWishlistItem();
+
+
+  // const toggleFavorite = () => {
+  //   if (isFavorited) {
+  //     deleteWishlistMutation.mutate(wishlistId, {
+  //       onSuccess: () => {
+  //         setFavorite(false, null);
+  //       },
+  //     });
+  //   } else {
+  //     createWishlistMutation.mutate({ product_id: id }, {
+  //       onSuccess: (data) => {
+  //         setFavorite(true, data.id);
+  //       },
+  //     });
+  //   }
+  // };
+
+  const { favorites, toggleFavorite } = useFavoriteStore();
+
 
   const {colors} = useTheme();
   const insets = useSafeAreaInsets();
@@ -43,7 +77,9 @@ const DetailsScreen = ({navigation , route: {params : {id , imageUrl ,title }}} 
     return;
   }
 
-  
+  console.log(product?.images);
+  console.log(Array.isArray(product?.images));
+  const Images = Array.isArray(product?.images) ? product?.images[0] : product?.images;
 
   // Prepare the cart item
   const cartItem = {
@@ -70,32 +106,32 @@ const DetailsScreen = ({navigation , route: {params : {id , imageUrl ,title }}} 
 
 
 
-const handleFavourite = (productId: number) => {
-  // Check if the productId is valid
-  if (!productId) {
-    console.log("Invalid product ID");
-    return;
-  }
 
-  console.log('Adding product to wishlist...');
-  
-  // Call createWishlistItem directly
-  createWishlistItem(
-    { product_id: productId },  // The request body with product ID
-    {
+
+const handleFavorite = () => {
+  if (!favorites.has(id)) {
+    createWishlistMutation.mutate({ product_id: id }, {
       onSuccess: (data) => {
-        console.log(`Product ${productId} added to wishlist successfully:`, data);
+        toggleFavorite(id);
       },
       onError: (error) => {
-        console.error(`Failed to add product ${productId} to wishlist:`, error);
+        console.error('Error creating wishlist item:', error.response?.data || error.message);
       },
-    }
-  );
+    });
+  } else {
+    navigation.navigate('TabsStack', {
+      screen: 'Wish',
+    });
+  }
 };
 
+const isFavorited = favorites.has(id);
+
+if (isLoading) return <Text>Loading...</Text>;
+if (isError) return <Text>Error loading product details</Text>;
 
 
-  console.log(product);
+  console.log(product.images);
   console.log(id);
   
   return (
@@ -105,7 +141,36 @@ const handleFavourite = (productId: number) => {
       flex: 1
     }}
     > 
-    <Image source={{uri: product?.thumbnail}} style={StyleSheet.absoluteFill} resizeMode='cover' />
+
+
+{product?.images && Array.isArray(product.images) && (
+        <Carousel
+          width={viewportWidth}
+          height={viewportHeight}
+          data={product.images}
+          renderItem={({ item }) => (
+            
+              <Image source={{ uri: item }}  style={StyleSheet.absoluteFill} resizeMode='cover'  />
+            
+          )}
+        />
+      )}
+{/* <Swiper
+        style={{ height: viewportWidth }}
+        showsButtons={false}
+        loop={true}
+        autoplay={true}
+        autoplayTimeout={3}
+      >
+        {(product?.images).map((uri, index) => (
+          <View key={index} style={{ width: viewportWidth, height: viewportWidth, justifyContent: 'center', alignItems: 'center' }}>
+            <Image source={{ uri }} style={{ width: '100%', height: '100%' }} />
+          </View>
+        ))}
+      </Swiper> */}
+   
+    {/* <Image source={{uri: product?.thumbnail}} style={StyleSheet.absoluteFill} resizeMode='cover' /> */}
+    {/* <Image source = {{uri: product?.images[2]}} style = {{width: '100%', height: '100%'}} /> */}
 
       
 <SafeAreaView
@@ -150,7 +215,7 @@ const handleFavourite = (productId: number) => {
               aspectRatio: 1,
               alignItems: "center",
               justifyContent: "center",
-              borderRadius: 52,
+              borderRadius: 26,
               borderWidth: 1,
               borderColor: "#fff",
               backgroundColor: "white",
@@ -160,12 +225,17 @@ const handleFavourite = (productId: number) => {
         shadowRadius: 4,
             }}
             onPress={() =>{
-              handleFavourite(id);
+              handleFavorite();
               console.log('Favourite');
 
             } }
           >
-            <Icons name="favorite-border" size={24} color={"black"} />
+            {/* <Icons name="favorite-border" size={24} color={"black"} /> */}
+            <Icons
+                                name={isFavorited ? "favorite" : "favorite-border"}
+                                size={24}
+                                color={isFavorited ? "red" : "black"}
+                            />
           </TouchableOpacity>
           <TouchableOpacity
             style={{

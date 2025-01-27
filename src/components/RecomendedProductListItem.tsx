@@ -7,7 +7,7 @@ import Icons from '@expo/vector-icons/MaterialIcons';
 import { useCreateWishlist } from '../api';
 import { useEffect } from 'react';
 
-type ProductListItemProps = { 
+type RecomendedProductListItemProps = { 
     navigation: any;
     handleFavourite?: (id: number) => void;
     data?: any[];
@@ -22,7 +22,7 @@ type Product = {
     price: number;
   };
 
-const ProductListItem = ({ navigation, data }: ProductListItemProps) => {
+const RecomendedProductListItem = ({ navigation, data }: RecomendedProductListItemProps) => {
     const createWishlistMutation = useCreateWishlist();
     const { colors } = useTheme();
     const { favorites, toggleFavorite } = useFavoriteStore();
@@ -64,7 +64,7 @@ const ProductListItem = ({ navigation, data }: ProductListItemProps) => {
                     style={styles.cardContainer}
                     onPress={() =>
                         navigation.navigate('Details', {
-                            id: item.product_id,
+                            id: item.id,
                             imageUrl: item.thumbnail,
                             title: item.title,
                         })
@@ -168,4 +168,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ProductListItem;
+export default RecomendedProductListItem;

@@ -73,6 +73,27 @@ export const fetchTodos = async (query = ""): Promise<Todo[]> => {
 };
 
 
+
+export const fetchRecommendedProducts = async (): Promise<Product[]> => {
+  const url = `${BASE_URL}/feedback/recommendations`;
+  const refreshToken = useAuthStore.getState().refreshToken;
+  const headers = {
+    'Accept': 'application/json',
+    'Authorization': `Bearer ${refreshToken}`,
+  };
+
+  const response = await fetch(url, { headers });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch recommended products: ${response.statusText}`);
+  }
+
+  const responseData = await response.json();
+  const recommendedProducts: Product[] = responseData.data || [];
+  console.log('Fetched recommended products:', recommendedProducts);
+  return responseData.data.products || [];
+};
+
 /**
  * Fetches a single product by ID from the API.
  */
@@ -652,7 +673,7 @@ export const useCreateWishlist = () => {
       console.error('Error creating wishlist item:', error);
     },
   });
-};
+};  
 
 
 export const fetchWishlist = async (query = ""): Promise<WishlistItem[]> => {

@@ -4,22 +4,22 @@ import { ScrollView } from 'react-native'
 import { useTheme } from '@react-navigation/native'
 import Icons from '@expo/vector-icons/MaterialIcons'
 import Card from '../components/Card'
-import { FlatList } from 'react-native'
-import MasonryList from 'reanimated-masonry-list';
-import { useState, useRef, useCallback, useMemo } from 'react'
-import { BlurView } from 'expo-blur'
-import BottomSheet, { BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
+
+import { useState, useRef} from 'react'
+
+
 import BottomSheetModal from '@gorhom/bottom-sheet'
-import CustomBackdrop from '../components/CustomBackdrop'
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import FilterView from '../components/FilterView'
+
+
+
 import { TabsStackScreenProps } from '../navigators/TabsNavigator'
-import { addTodo, fetchTodos, useCreateWishlist , fetchUserInfo } from '../api';
-import { Todo , User } from '../entities/Todo'
+import {  fetchTodos, useCreateWishlist , fetchUserInfo , fetchRecommendedProducts } from '../api';
+import { Product, Todo , User } from '../entities/Todo'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../store/auth/useAuthStore'
 import ProductListItem from '../components/ProductListItem'
-import BottomSheets from '../components/BottomSheetModal'
+import RecomendedProductListItem from '../components/RecomendedProductListItem'
+
 
 
 const MESONARY_LIST_DATA = [
@@ -89,12 +89,22 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
     staleTime: Infinity,
   });
 
+  const { data: reco = [] } = useQuery<Product[]>({
+    queryKey: ['recommendedProducts', { search }],
+    queryFn: () => fetchRecommendedProducts(),
+    staleTime: Infinity,
+  });
+
   const {data: userInfo = []} = useQuery<User[]>({
     queryKey: ['user'],
     queryFn:  fetchUserInfo,
     staleTime: Infinity,
   })
-  console.log(todos);
+
+
+
+  // console.log(todos);
+  console.log(reco);
   const { colors } = useTheme();
 
 
@@ -169,7 +179,7 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
           </View>
           <View
             style={{
-              height: 24,
+              height: 12,
               width: 1,
               backgroundColor: colors.text,
               marginRight: 8
@@ -181,7 +191,7 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
             onPress={() => navigation.navigate('CartScreen')}
             style={{
               backgroundColor: colors.card,
-              padding: 8,
+              padding: 4,
               borderRadius: 52,
               alignItems: 'center',
               justifyContent: 'center',
@@ -204,8 +214,8 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
         <View style={{
           flexDirection: 'row',
           paddingHorizontal: 24,
-          marginBottom: 12,
-          gap: 24
+          // marginBottom: 12,
+          gap: 8
         }}>
 
 
@@ -249,10 +259,10 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
 
         {/* Grid View Section */}
 
-        <View style={{ paddingHorizontal: 24 }}>
+        {/* <View style={{ paddingHorizontal: 24 }}> */}
 
           {/* text section */}
-          <View style={{
+          {/* <View style={{
             flexDirection: 'row',
 
             justifyContent: 'space-between',
@@ -263,11 +273,11 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
             </Text>
             <TouchableOpacity>
               <Text style={{ color: colors.primary, fontWeight: '600' }}>See All</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
-          </View>
+          {/* </View> */}
 
-          <View
+          {/* <View
             style={{
               flexDirection: 'row',
               height: 200,
@@ -319,17 +329,34 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
             </View>
 
 
-          </View>
+          </View> */}
 
 
-        </View>
+        {/* </View> */}
 
         {/* // Categories Section */}
         <View>
 
 
         </View>
-        
+        <Text 
+          style = {{
+            fontSize: 24,
+            fontWeight: '700',
+            paddingHorizontal: 24,
+           
+            color: colors.text
+          }}
+          
+          >
+          
+            Recommended Products
+          </Text>
+        <RecomendedProductListItem 
+          data={reco}
+          navigation={navigation}
+          handleFavourite={handleFavourite}
+          />
         
           <Text 
           style = {{
@@ -341,8 +368,10 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
           }}
           
           >
+          
             Featured Products
           </Text>
+        
         
 
 

@@ -1,36 +1,34 @@
-import { createWishlistItem , deleteWishlistItem } from '../../api';
 import { create } from 'zustand';
+import { fetchWishlist } from '../../api';
+
 // Define the shape of the store's state
 interface FavoriteState {
-  isFavorited: boolean;
-  wishlistId: number | null;
-  toggleFavorite: (productId: number) => Promise<void>;
+  favorites: Set<number>; // Use a Set to store favorited product IDs
+  toggleFavorite: (productId: number) => void;
+  fetchAndSetFavorites: () => Promise<void>;
 }
 
 // Create the Zustand store
 const useFavoriteStore = create<FavoriteState>((set) => ({
-  isFavorited: false,
-  wishlistId: null,
-  toggleFavorite: async (productId: number) => {
+  favorites: new Set(),
+  toggleFavorite: (productId) =>
     set((state) => {
-      if (state.isFavorited) {
-        // If already favorited, delete from wishlist
-        deleteWishlistItem(state.wishlistId!)
-          .then(() => {
-            set({ isFavorited: false, wishlistId: null });
-          })
-          .catch(console.error);
-        return state; // Return current state until the promise resolves
+      const newFavorites = new Set(state.favorites);
+      if (state.favorites.has(productId)) {
+        newFavorites.delete(productId);
       } else {
-        // If not favorited, add to wishlist
-        createWishlistItem({ product_id: productId })
-          .then((response) => {
-            set({ isFavorited: true, wishlistId: response.id });
-          })
-          .catch(console.error);
-        return state; // Return current state until the promise resolves
+        newFavorites.add(productId);
       }
-    });
+      return { favorites: newFavorites };
+    }),
+  fetchAndSetFavorites: async () => {
+    try {
+      const wishlistItems = await fetchWishlist();
+      const newFavorites = new Set(wishlistItems.map(item => item.product_id));
+      set({ favorites: newFavorites });
+    } catch (error) {
+      console.error('Error fetching and setting favorites:', error);
+    }
   },
 }));
 
