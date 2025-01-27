@@ -13,13 +13,17 @@ import {
 import images from "../Constants/images";
 import { RootStackScreenProps } from "../navigators/RootNavigator";
 import { useSignup } from "../api";
+import { useAuthStore } from "../store/auth/useAuthStore";
 
 const SignUp = ({ navigation }: RootStackScreenProps<"signUp">) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [full_name, setFull_name] = useState("");
-  const { mutate: signupUser, error } = useSignup();
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const {mutate:signupUser} = useSignup();
+
   const handleSignup = async () => {
     try {
       // Call signupUser with credentials
@@ -33,6 +37,9 @@ const SignUp = ({ navigation }: RootStackScreenProps<"signUp">) => {
       Alert.alert('Signup Failed', 'Please check your details and try again.');
     }
   };
+
+  
+
     
 
   const handleSignIn = () => {

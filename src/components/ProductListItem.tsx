@@ -40,12 +40,12 @@ const ProductListItem = ({ navigation, data }: ProductListItemProps) => {
                     }
                 >
                     {/* Image Section */}
-                    {/* <Image
+                    <Image
                         source={{ uri: item.thumbnail }}
                         style={[ styles.productImage]}
                         resizeMode="cover"
                         loading = "eager"
-                    /> */}
+                    />
 
                     {/* Text Content Section */}
                     <View style={styles.textContent}>

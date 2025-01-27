@@ -467,6 +467,11 @@ export const useSignup = () => {
   });
 };
 
+
+// Custom hook for signup
+
+
+
 //Cart
 const createCart = async (cartItems: CartResponse) => {
   const accessToken = useAuthStore.getState().refreshToken;
@@ -613,7 +618,7 @@ export const useDeleteCartItem = () => {
 
 //Wishlist
 
-const createWishlistItem = async (requestBody: { product_id: number }) => {
+export const createWishlistItem = async (requestBody: { product_id: number }) => {
   const accessToken = useAuthStore.getState().refreshToken;
   console.log('Access Token:', accessToken);
 
