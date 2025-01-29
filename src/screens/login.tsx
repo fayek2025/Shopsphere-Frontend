@@ -10,8 +10,7 @@ import {
   View,
   StyleSheet,
 } from "react-native";
-import images from "../Constants/images";
-import icons from "../Constants/icons";
+
 import { useNavigation } from "@react-navigation/native";
 import { RootStackScreenProps } from "../navigators/RootNavigator";
 import { useLogin } from "../api";
@@ -42,14 +41,14 @@ const Login = ({ navigation }: RootStackScreenProps<"Login">) => {
           try {
             console.log("Login successful!", data);
   
-            // Ensure the API response includes a `user` object
+          
             if (!data.user) {
               throw new Error("User data is missing in the API response.");
             }
   
             // Store user data in Zustand
             await storeLogin({
-               // Ensure `data.user` is present in the API response
+              
               accessToken: data.access_token,
               refreshToken: data.refresh_token,
             });
@@ -113,18 +112,9 @@ const Login = ({ navigation }: RootStackScreenProps<"Login">) => {
         </View>
       </TouchableOpacity>
 
-      <Text style={styles.orText}>OR</Text>
+      
 
-      <TouchableOpacity onPress={handleLogin} style={styles.googleButton}>
-        <View style={styles.buttonContent}>
-          <Image
-            // source={require(icons.google)}
-            style={styles.googleIcon}
-            resizeMode="contain"
-          />
-          <Text style={styles.googleButtonText}>Continue with Google</Text>
-        </View>
-      </TouchableOpacity>
+     
 
       <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
         <Text style={styles.signUpText}>Don't have an account? Sign Up</Text>
@@ -140,7 +130,7 @@ const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: "white",
     flex: 1,
-    paddingVertical: 40
+    paddingVertical: 80
   },
   scrollView: {
     height: "100%",

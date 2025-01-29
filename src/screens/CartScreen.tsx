@@ -15,7 +15,7 @@ import { fetchCarts } from '../api';
 import { useUpdateCart } from '../api'; // Adjust the path to match your file structure
 import { Alert } from 'react-native';
 import { useDeleteCartItem } from '../api';
-
+import { ActivityIndicator } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 const CartScreen = ({ navigation   }: RootStackScreenProps<'CartScreen'>) => {
   
@@ -112,7 +112,7 @@ const CartScreen = ({ navigation   }: RootStackScreenProps<'CartScreen'>) => {
     );
   };
 
-
+    // r
   const handleDelete = (cartId: number) => {
     Alert.alert(
       'Delete Item',
@@ -180,7 +180,7 @@ const CartScreen = ({ navigation   }: RootStackScreenProps<'CartScreen'>) => {
   const renderCartItem = ({ item }: { item: any }) => {
     return (
       <>
-        {item.cart_items.map((cartItem: any) => (
+        { item.cart_items.map((cartItem: any) => (
           <CartItems
             id={item.id}
             imageUri={cartItem.product?.thumbnail} 

@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, Image, ActivityIndicator, Dimensions, Alert } from "react-native";
+import { StyleSheet, View, Text, Image, ActivityIndicator, Dimensions, Alert, TouchableOpacity } from "react-native";
 import Swiper from "react-native-deck-swiper";
 import axios from "axios";
-import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuthStore } from "../store/auth/useAuthStore";
 
-// Get screen dimensions for responsive design
 const { width, height } = Dimensions.get("window");
 
-// Define types for product and order response data
 interface Brand {
   id: number;
   name: string;
@@ -41,12 +38,14 @@ interface Product {
 interface SwipeScreenProps {}
 
 const SwipeScreen: React.FC<SwipeScreenProps> = () => {
-  const [products, setProducts] = useState<Product[]>([]); // Products state
-  const [previousCards, setPreviousCards] = useState<Product[]>([]); // State for previous cards
-  const [loading, setLoading] = useState<boolean>(true); // Loading state
-  const [token, setToken] = useState<string>(useAuthStore.getState().refreshToken); // Token for authorization
+  const [products, setProducts] = useState<Product[]>([]);
+  const [previousCards, setPreviousCards] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [fetchComplete, setFetchComplete] = useState<boolean>(false);
+  const [fetchError, setFetchError] = useState<boolean>(false);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [token, setToken] = useState<string>(useAuthStore.getState().refreshToken);
 
-  // Fetch products from the API
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -54,9 +53,11 @@ const SwipeScreen: React.FC<SwipeScreenProps> = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      setPreviousCards(products); // Store the current products before fetching new ones
+      setFetchComplete(false);
+      setFetchError(false);
+      setPreviousCards(products);
       const response = await axios.get(
-        "https://591c-2a09-bac5-49b-1028-00-19c-16e.ngrok-free.app/feedback/swipe?limit=10",
+        "https://6ad2-2a09-bac1-b20-518-00-3c2-2c.ngrok-free.app/feedback/swipe?limit=10",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -64,17 +65,20 @@ const SwipeScreen: React.FC<SwipeScreenProps> = () => {
         }
       );
       setProducts(response.data.data || []);
+      setCurrentIndex(0); // Reset the current index when new products are fetched
     } catch (error) {
       console.error("Error fetching products:", error.message);
       Alert.alert("Error", "Unable to fetch products. Please try again later.");
+      setFetchError(true); // Set fetch error to true if fetching fails
     } finally {
       setLoading(false);
+      setFetchComplete(true);
     }
   };
 
   const refetchPreviousCards = () => {
     if (previousCards.length > 0) {
-      setProducts(previousCards); // Restore the previous set of cards
+      setProducts(previousCards);
       Alert.alert("Success", "Restored the previous set of cards.");
     } else {
       Alert.alert("Error", "No previous cards to restore.");
@@ -84,7 +88,7 @@ const SwipeScreen: React.FC<SwipeScreenProps> = () => {
   const handleFeedback = async (productId: number, liked: boolean) => {
     try {
       await axios.post(
-        "https://591c-2a09-bac5-49b-1028-00-19c-16e.ngrok-free.app/feedback",
+        "https://6ad2-2a09-bac1-b20-518-00-3c2-2c.ngrok-free.app/feedback",
         {
           product_id: productId,
           liked: liked,
@@ -105,11 +109,13 @@ const SwipeScreen: React.FC<SwipeScreenProps> = () => {
   const onSwipeRight = (cardIndex: number) => {
     const product = products[cardIndex];
     if (product) handleFeedback(product.product_id, true);
+    setCurrentIndex(cardIndex + 1);
   };
 
   const onSwipeLeft = (cardIndex: number) => {
     const product = products[cardIndex];
     if (product) handleFeedback(product.product_id, false);
+    setCurrentIndex(cardIndex + 1);
   };
 
   if (loading) {
@@ -123,15 +129,13 @@ const SwipeScreen: React.FC<SwipeScreenProps> = () => {
 
   return (
     <View style={styles.container}>
-      
       {products.length > 0 ? (
-        
         <Swiper
           cards={products}
           renderCard={(product: Product) => (
             <View style={styles.card}>
               <Image
-                source={{ uri: product.thumbnail }} // Ensure your API returns an image URL
+                source={{ uri: product.thumbnail }}
                 style={styles.image}
               />
               <Text style={styles.name}>{product.title}</Text>
@@ -192,6 +196,13 @@ const SwipeScreen: React.FC<SwipeScreenProps> = () => {
             <Text style={styles.reloadText}>Refetch Previous</Text>
           </TouchableOpacity>
         </View>
+      )}
+
+      {(fetchError || currentIndex >= products.length) && (
+        <TouchableOpacity onPress={fetchProducts} style={styles.refetchButton}>
+          <Ionicons name="refresh" size={24} color="white" />
+          <Text style={styles.refetchText}>Refetch Products</Text>
+        </TouchableOpacity>
       )}
     </View>
   );
@@ -260,8 +271,22 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
+    marginTop: 10,
   },
   reloadText: {
+    marginLeft: 8,
+    color: "white",
+    fontSize: 16,
+  },
+  refetchButton: {
+    flexDirection: "row",
+    backgroundColor: "#4CAF50",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    marginTop: 20,
+  },
+  refetchText: {
     marginLeft: 8,
     color: "white",
     fontSize: 16,

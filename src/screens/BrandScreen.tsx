@@ -109,54 +109,7 @@ const BrandScreen = ({navigation} : TabsStackScreenProps<"Brand">) => {
                     )
                 }}
                 
-                ListHeaderComponent={
-                    <View style = {{ 
-                        flexDirection: 'row',
-                        paddingHorizontal: 12,
-                        
-                        gap:24 
-                    }}>
-        
-        
-                        <TouchableOpacity
-                        style = {{
-                            flex: 1,
-                            height: 52,
-                            borderWidth: 1,
-                            borderColor: colors.border,
-                            padding: 8,
-                            borderRadius: 52,
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            
-                            
-                        }}
-                        >
-        
-                            <Icons name="search" size={24} color={colors.text}
-                                style = {{opacity: 0.5}}
-                            />
-                            <TextInput
-                            placeholder='Search'
-                            style = {{
-                                flex: 1,
-                                paddingVertical: 8,
-                                color: colors.text,
-                                fontSize: 16,
-                                fontWeight: '500'
-                            }}
-                            />
-        
-                            
-                        </TouchableOpacity>
-        
-                       
-        
-        
-                    </View>
-        
-                    
-                }
+               
                 />
 
             </View>

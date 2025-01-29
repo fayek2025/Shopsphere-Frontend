@@ -15,6 +15,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { useSearchProductsByText, useSearchProductsByImage } from "../api";
 import Icons from '@expo/vector-icons/MaterialIcons';
+import { RootStackScreenProps } from "../navigators/RootNavigator";
 
 interface Product {
   id: number;
@@ -25,9 +26,9 @@ interface Product {
   images: string[];
 }
 
-const SearchScreen = () => {
+const SearchScreen = ({navigation} : RootStackScreenProps<"SearchScreen"> ) => {
   const [text, setText] = useState("");
-  const [image, setImage] = useState<File | null>(null);
+  const [image, setImage] = useState<{ uri: string; type: string; name: string } | null>(null);
   const textSearchMutation = useSearchProductsByText();
   const imageSearchMutation = useSearchProductsByImage();
 
@@ -69,11 +70,22 @@ const SearchScreen = () => {
   };
 
   const renderProduct = ({ item }: { item: Product }) => (
-    <View style={styles.productContainer}>
+    <TouchableOpacity
+    style={styles.productContainer}
+    
+    onPress={() => navigation.navigate('Details', {
+      id: item.id,
+                            imageUrl: item.thumbnail,
+                            title: item.title// Add the description property
+    })}>
+
+    
+      <Image source={{ uri: item.thumbnail }} style={styles.productImage} resizeMode="cover" />
       <Text style={styles.productTitle}>{item.title}</Text>
       <Text style={styles.productDescription}>{item.description}</Text>
       <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
-    </View>
+    
+    </TouchableOpacity>
   );
 
   return (
@@ -94,6 +106,13 @@ const SearchScreen = () => {
             <Icons name="photo" size={24} color="#666" />
           </TouchableOpacity>
         </View>
+
+        {image && (
+          <View style={styles.selectedImageContainer}>
+            <Image source={{ uri: image.uri }} style={styles.selectedImage} />
+            <Text style={styles.selectedImageText}>{image.name}</Text>
+          </View>
+        )}
 
         <TouchableOpacity
           style={[
@@ -143,6 +162,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: "#f9f9f9",
+    paddingVertical : 40,
   },
   title: {
     fontSize: 28,
@@ -172,6 +192,20 @@ const styles = StyleSheet.create({
   },
   imageIcon: {
     marginLeft: 10,
+  },
+  selectedImageContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  selectedImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 10,
+    marginBottom: 5,
+  },
+  selectedImageText: {
+    fontSize: 14,
+    color: "#666",
   },
   confirmButton: {
     width: "100%",
@@ -208,6 +242,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 2,
+  },
+  productImage: {
+    width: '100%',
+    height: 150,
+    borderRadius: 10,
+    marginBottom: 10,
   },
   productTitle: {
     fontSize: 18,

@@ -4,6 +4,7 @@ import { ScrollView } from 'react-native'
 import { useTheme } from '@react-navigation/native'
 import Icons from '@expo/vector-icons/MaterialIcons'
 import Card from '../components/Card'
+import { RefreshControl } from 'react-native'
 
 import { useState, useRef} from 'react'
 
@@ -81,6 +82,8 @@ const dummyData = [
 const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
   const accessToken = useAuthStore.getState().refreshToken;
   const queryClient = useQueryClient();
+  const [refreshing, setRefreshing] = useState(false);
+
 
   const [search, setSearch] = useState('');
   const { data: todos = [], isLoading, isError, error } = useQuery<Todo[]>({
@@ -101,7 +104,13 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
     staleTime: Infinity,
   })
 
-
+  const onRefresh = () => {
+    setRefreshing(true);
+    queryClient.invalidateQueries(['todos', { search }]);
+    queryClient.invalidateQueries(['recommendedProducts']);
+    
+    setRefreshing(false);
+  };
 
   // console.log(todos);
   console.log(reco);
@@ -146,7 +155,11 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
   console.log(userInfo);
   return (
 
-    <ScrollView>
+    <ScrollView
+    refreshControl={
+      <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+    }
+    >
       <SafeAreaView
         style={{
           paddingVertical: 24, gap: 24,
@@ -218,7 +231,7 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
           gap: 8
         }}>
 
-
+        
           <TouchableOpacity
             style={{
               flex: 1,
@@ -238,7 +251,7 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
             <Icons name="search" size={24} color={colors.text}
               style={{ opacity: 0.5 }}
             />
-            <TextInput
+            <View
               placeholder='Search'
               style={{
                 flex: 1,
@@ -248,7 +261,7 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
                 fontWeight: '500'
               }}
             />
-
+          
 
           </TouchableOpacity>
 

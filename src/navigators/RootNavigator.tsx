@@ -17,8 +17,11 @@ import OnboardingScreen from '../screens/OnboardingScreen'
 import { useAuthStore } from '../store/auth/useAuthStore'
 import Transaction from '../screens/Transaction'
 import SearchScreen from '../screens/SearchScreen'
+import AboutUs from '../screens/AboutUs'
+import SplashScreen from '../screens/SplashScreen'
 
 export type RootStackParamList = {
+  Splash : undefined;
     TabsStack: NavigatorScreenParams<TabsStackParamList>;
     Details : {
       id? : number;
@@ -50,6 +53,7 @@ export type RootStackParamList = {
     };
     Transaction : undefined;
     SearchScreen: undefined;
+    AboutUs : undefined;
    
     
 }
@@ -66,6 +70,7 @@ const RootNavigator = () => {
 
   return (
     <RootStack.Navigator screenOptions={{ headerShown: false }}>
+      <RootStack.Screen name="Splash" component={SplashScreen} />
       {!isAuthenticated ? (
         <>
           <RootStack.Screen name="onBoarding" component={OnboardingScreen} />
@@ -85,6 +90,7 @@ const RootNavigator = () => {
           <RootStack.Screen name="EditProfile" component={EditProfile} />
           <RootStack.Screen name = "Transaction" component={Transaction} />
           <RootStack.Screen name = "SearchScreen" component={SearchScreen} />
+          <RootStack.Screen name = "AboutUs" component={AboutUs} />
         </>
       )}
     </RootStack.Navigator>

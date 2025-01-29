@@ -47,17 +47,6 @@ const TabsNavigator = () => {
           },
         }}
       />
-      
-      <TabsStack.Screen
-        name="Wish"
-        component={Wishlist}
-        options={{
-          headerShown: false,
-          tabBarIcon(props) {
-            return <Icons name="home" {...props} />;
-          },
-        }}
-      />
       <TabsStack.Screen
         name="Brand"
         component={BrandScreen}
@@ -78,6 +67,18 @@ const TabsNavigator = () => {
           },
         }}
       />
+      <TabsStack.Screen
+        name="Wish"
+        component={Wishlist}
+        options={{
+          headerShown: false,
+          tabBarIcon(props) {
+            return <Icons name="home" {...props} />;
+          },
+        }}
+      />
+      
+      
       <TabsStack.Screen
         name="Profile"
         component={Profile}

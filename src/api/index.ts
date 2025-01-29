@@ -29,7 +29,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuthStore } from "../store/auth/useAuthStore";
 
 // Base URL for the API
-const BASE_URL = "https://591c-2a09-bac5-49b-1028-00-19c-16e.ngrok-free.app";
+const BASE_URL = "https://6ad2-2a09-bac1-b20-518-00-3c2-2c.ngrok-free.app";
 const SSL = "http://192.168.0.105:3030"
 
 
@@ -37,7 +37,7 @@ const SSL = "http://192.168.0.105:3030"
 export const fetchTodos = async (query = ""): Promise<Todo[]> => {
   const allTodos: Todo[] = [];
   let currentPage = 1;
-  const pageSize = 10; // Adjust this value according to your API's pagination limit
+  const pageSize = 1; // Adjust this value according to your API's pagination limit
   let hasMorePages = true;
 
   try {
@@ -373,7 +373,7 @@ const loginUser = async (
     return response.data;
   } catch (error: any) {
     if (axios.isAxiosError(error)) {
-      console.error("Server returned error:", error.response?.data);
+      console.error("Server returned error:", error.response?.status, error.response?.data);
       throw new Error(error.response?.data?.detail || "Login failed");
     }
     throw error;
@@ -691,6 +691,7 @@ export const fetchWishlist = async (query = ""): Promise<WishlistItem[]> => {
 
     // Check for non-OK responses
     if (!response.ok) {
+      console.error(`Failed to fetch wishlist: ${response.statusText}, Status Code: ${response.status}`);
       throw new Error(`Failed to fetch wishlist: ${response.statusText}`);
     }
 
@@ -704,7 +705,7 @@ export const fetchWishlist = async (query = ""): Promise<WishlistItem[]> => {
     return wishlist;
   } catch (error) {
     // Log and rethrow errors for higher-level handling
-    console.error("Error fetching wishlist:", error);
+    console.error("Error fetching wishlist:", error );
     throw error;
   }
 };
