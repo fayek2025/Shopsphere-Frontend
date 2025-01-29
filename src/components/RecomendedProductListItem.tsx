@@ -42,10 +42,10 @@ const RecomendedProductListItem = ({ navigation, data }: RecomendedProductListIt
             renderItem={({ item }: any) => {
                 
     const handleFavorite = () => {
-        if (!favorites.has(item.product_id)) {
-          createWishlistMutation.mutate({ product_id: item.product_id }, {
+        if (!favorites.has(item.id)) {
+          createWishlistMutation.mutate({ product_id: item.id }, {
             onSuccess: (data) => {
-              toggleFavorite(item.product_id);
+              toggleFavorite(item.id);
             },
             onError: (error) => {
               console.error('Error creating wishlist item:', error.response?.data || error.message);
@@ -57,7 +57,7 @@ const RecomendedProductListItem = ({ navigation, data }: RecomendedProductListIt
           });
         }
       };
-                const isFavorited = favorites.has(item.product_id);
+                const isFavorited = favorites.has(item.id);
                 return(
                 
                 <TouchableOpacity
@@ -71,12 +71,12 @@ const RecomendedProductListItem = ({ navigation, data }: RecomendedProductListIt
                     }
                 >
                     {/* Image Section */}
-                    <Image
+                    {/* <Image
                         source={{ uri: item.thumbnail }}
                         style={[ styles.productImage]}
                         resizeMode="cover"
                         loading = "eager"
-                    />
+                    /> */}
 
                     {/* Text Content Section */}
                     <View style={styles.textContent}>

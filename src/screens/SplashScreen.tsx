@@ -6,8 +6,8 @@ import { useAuthStore } from '../store/auth/useAuthStore';
 const avatar = "/home/fayek/ecommerce_app/src/assets/image2.png";
 
 const SplashScreen = ({ navigation }: RootStackScreenProps<"Splash">) => {
-  const fadeAnim = new Animated.Value(0); // For fade-in effect
-  const { isAuthenticated } = useAuthStore();
+  const fadeAnim = new Animated.Value(0.5); // Start with a higher initial opacity
+  const { isAuthenticated , loggedOut } = useAuthStore();
   const [hasShownSplash, setHasShownSplash] = useState(false); // Splash control state
 
   useEffect(() => {
@@ -34,7 +34,13 @@ const SplashScreen = ({ navigation }: RootStackScreenProps<"Splash">) => {
   const navigateToNextScreen = () => {
     if (isAuthenticated) {
       navigation.replace("TabsStack", { screen: "Home" });
-    } else {
+    } else if (loggedOut) {
+      navigation.replace("Login");
+    }
+    
+    
+    
+    else {
       navigation.replace("onBoarding");
     }
   };

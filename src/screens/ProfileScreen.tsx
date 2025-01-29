@@ -78,7 +78,7 @@ const Profile = ({navigation} : TabsStackScreenProps<"Profile">) => {
 const logoutHandler = async () => {
   try {
     await useAuthStore.getState().logout();
-    navigation.navigate("Login");
+    // navigation.navigate("Login");
     console.log("User logged out successfully!");
   } catch (error) {
     console.error("Error logging out:", error);

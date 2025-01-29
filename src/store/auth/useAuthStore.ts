@@ -13,7 +13,8 @@ interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
-  login: (data: {  accessToken: string; refreshToken: string }) => Promise<void>;
+  loggedOut: boolean;  // New state to track logout status
+  login: (data: { accessToken: string; refreshToken: string }) => Promise<void>;
   logout: () => Promise<void>;
   loadStoredAuth: () => Promise<void>;
 }
@@ -23,9 +24,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   accessToken: null,
   refreshToken: null,
   isAuthenticated: false,
+  loggedOut: false, // Initialize loggedOut state
 
   // Login function
-  login: async ({  accessToken, refreshToken }) => {
+  login: async ({ accessToken, refreshToken }) => {
     if (accessToken && refreshToken) {
       try {
         await AsyncStorage.setItem('access_token', accessToken);
@@ -33,10 +35,10 @@ export const useAuthStore = create<AuthState>((set) => ({
         // await AsyncStorage.setItem('user', JSON.stringify(user));  // Store the user data
 
         set({
-          
           accessToken,
           refreshToken,
           isAuthenticated: true,
+          loggedOut: false, // Reset loggedOut state on login
         });
       } catch (error) {
         console.error('Error saving auth data to AsyncStorage:', error);
@@ -63,6 +65,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       accessToken: null,
       refreshToken: null,
       isAuthenticated: false,
+      loggedOut: true, // Set loggedOut state to true on logout
     });
   },
 
@@ -80,7 +83,10 @@ export const useAuthStore = create<AuthState>((set) => ({
           accessToken,
           refreshToken,
           isAuthenticated: true,
+          loggedOut: false, // Ensure loggedOut is false if user is authenticated
         });
+      } else {
+        set({ loggedOut: true }); // If no valid auth data, set loggedOut to true
       }
     } catch (error) {
       console.error('Error loading auth data from AsyncStorage:', error);
