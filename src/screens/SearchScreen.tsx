@@ -71,48 +71,45 @@ const SearchScreen = ({navigation} : RootStackScreenProps<"SearchScreen"> ) => {
 
   const renderProduct = ({ item }: { item: Product }) => (
     <TouchableOpacity
-    style={styles.productContainer}
-    
-    onPress={() => navigation.navigate('Details', {
-      id: item.id,
-                            imageUrl: item.thumbnail,
-                            title: item.title// Add the description property
-    })}>
-
-    
+      style={styles.productContainer}
+      onPress={() => navigation.navigate('Details', {
+        id: item.id,
+        imageUrl: item.thumbnail,
+        title: item.title
+      })}
+    >
       <Image source={{ uri: item.thumbnail }} style={styles.productImage} resizeMode="cover" />
       <Text style={styles.productTitle}>{item.title}</Text>
       <Text style={styles.productDescription}>{item.description}</Text>
       <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
-    
     </TouchableOpacity>
   );
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <Text style={styles.title}>Search Product</Text>
+        <Text style={styles.title}>Search Products</Text>
 
         <View style={styles.searchContainer}>
           <TextInput
             style={styles.input}
-            placeholder="Search products..."
+            placeholder="Type a query..."
             value={text}
             onChangeText={setText}
             returnKeyType="search"
             onSubmitEditing={handleSearch}
           />
-          <TouchableOpacity onPress={handleImagePick} style={styles.imageIcon}>
-            <Icons name="photo" size={24} color="#666" />
-          </TouchableOpacity>
         </View>
 
-        {image && (
-          <View style={styles.selectedImageContainer}>
-            <Image source={{ uri: image.uri }} style={styles.selectedImage} />
-            <Text style={styles.selectedImageText}>{image.name}</Text>
-          </View>
-        )}
+        <Text style={styles.orText}>Or</Text>
+
+        <TouchableOpacity onPress={handleImagePick} style={styles.uploadContainer}>
+          {image ? (
+            <Text style={styles.uploadedText}>Image Uploaded: {image.name}</Text>
+          ) : (
+            <Text style={styles.uploadText}>Upload an Image</Text>
+          )}
+        </TouchableOpacity>
 
         <TouchableOpacity
           style={[
@@ -162,7 +159,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: "#f9f9f9",
-    paddingVertical : 40,
+    paddingVertical: 40,
   },
   title: {
     fontSize: 28,
@@ -190,27 +187,34 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 2,
   },
-  imageIcon: {
-    marginLeft: 10,
+  orText: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "#666",
+    marginVertical: 10,
   },
-  selectedImageContainer: {
-    alignItems: 'center',
+  uploadContainer: {
+    height: 150,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f0f0f0",
     marginBottom: 20,
   },
-  selectedImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
-    marginBottom: 5,
+  uploadText: {
+    fontSize: 16,
+    color: "#999",
   },
-  selectedImageText: {
-    fontSize: 14,
-    color: "#666",
+  uploadedText: {
+    fontSize: 16,
+    color: "#333",
   },
   confirmButton: {
     width: "100%",
     height: 50,
-    backgroundColor: "#007BFF",
+    backgroundColor: "black",
     borderRadius: 10,
     justifyContent: "center",
     alignItems: "center",

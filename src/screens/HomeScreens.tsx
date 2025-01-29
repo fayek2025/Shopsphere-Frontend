@@ -117,14 +117,6 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
   const { colors } = useTheme();
 
 
-  const bottomSheetRef = useRef<BottomSheetModal>(null);
-  
-
-
-
-
-
-
   //handle Favourite Function
   const handleFavourite = (productId: number) => {
     const { mutate } = useCreateWishlist();
@@ -252,16 +244,25 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
               style={{ opacity: 0.5 }}
             />
             <View
-              placeholder='Search'
+             
               style={{
                 flex: 1,
-                paddingVertical: 8,
-                color: colors.text,
-                fontSize: 16,
-                fontWeight: '500'
+                
+                paddingHorizontal: 8,
+                alignItems: 'center',
+
+               
+                
               }}
-            />
-          
+            >
+              <Text style={{
+                fontSize: 16,
+                fontWeight: '400',
+                color: colors.text,
+                opacity: 0.5
+              }}
+              >Search for products using text or image</Text>
+          </View>
 
           </TouchableOpacity>
 
@@ -270,88 +271,8 @@ const HomeScreens = ({ navigation }: TabsStackScreenProps<"Home">) => {
 
         </View>
 
-        {/* Grid View Section */}
-
-        {/* <View style={{ paddingHorizontal: 24 }}> */}
-
-          {/* text section */}
-          {/* <View style={{
-            flexDirection: 'row',
-
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
-            <Text style={{ fontSize: 24, fontWeight: "700" }}>
-              New Collection
-            </Text>
-            <TouchableOpacity>
-              <Text style={{ color: colors.primary, fontWeight: '600' }}>See All</Text>
-            </TouchableOpacity> */}
-
-          {/* </View> */}
-
-          {/* <View
-            style={{
-              flexDirection: 'row',
-              height: 200,
-              paddingVertical: 12,
-              gap: 12,
-              borderRadius: 52,
-            }}
-
-          >
-
-
-            <Card
-              onPress={() => navigation.navigate('Details', {
-                imageUrl: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                title: 'Sample Title', // Add the title property
-                price: '2500',
-                description: 'Sample Description', // Add the description property
-              })
-
-              }
-              imageUri='https://images.unsplash.com/photo-1532074662130-17f5486532b0?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-              price={120}
-
-            />
-            <View style={{ flex: 1, gap: 12 }}>
-              <Card
-                onPress={() => navigation.navigate('Details', {
-                  imageUrl: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                  title: 'Sample Title', // Add the title property
-                  price: '2500',
-                  description: 'Sample Description',
-                })}
-
-                imageUri='https://images.unsplash.com/photo-1532074662130-17f5486532b0?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-                price={120}
-              />
-              <Card
-                onPress={() => navigation.navigate('Details', {
-                  imageUrl: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                  title: 'Sample Title', // Add the title property
-                  price: '2500',
-                  description: 'Sample Description',
-                })}
-                imageUri="https://plus.unsplash.com/premium_photo-1669688174106-05f7334f1e64?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                price={120}
-              />
-
-
-            </View>
-
-
-          </View> */}
-
-
-        {/* </View> */}
-
-        {/* // Categories Section */}
-        <View>
-
-
-        </View>
+       
+       
         <Text 
           style = {{
             fontSize: 24,

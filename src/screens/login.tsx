@@ -1,58 +1,42 @@
 import React, { useState } from "react";
-import { SafeAreaView } from "react-native";
-import {
-  Alert,
-  Image,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  StyleSheet,
-} from "react-native";
-
+import { SafeAreaView, Alert, Image, ScrollView, Text, TextInput, TouchableOpacity, View, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackScreenProps } from "../navigators/RootNavigator";
 import { useLogin } from "../api";
 import { useAuthStore } from "../store/auth/useAuthStore";
 
-
-
-const avatar = "https://images.unsplash.com/photo-1521577352947-9bb58764b69a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=986&q=80"
-
+// Assuming the logo is a local file, you can import it like this:
+const logo = require("../assets/image-removebg.png"); // Adjust the path as necessary
 
 const Login = ({ navigation }: RootStackScreenProps<"Login">) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { mutate: login, error } = useLogin();
-  const  storeLogin = useAuthStore((state) => state.login);
-  
+  const storeLogin = useAuthStore((state) => state.login);
 
   const handleLogin = () => {
     if (!username || !password) {
       Alert.alert("Error", "Please enter both username and password.");
       return;
     }
-  
+
     login(
       { username, password },
       {
         onSuccess: async (data) => {
           try {
             console.log("Login successful!", data);
-  
-          
+
             if (!data.user) {
               throw new Error("User data is missing in the API response.");
             }
-  
+
             // Store user data in Zustand
             await storeLogin({
-              
               accessToken: data.access_token,
               refreshToken: data.refresh_token,
             });
-  
+
             // Navigate to the home screen
             navigation.navigate("TabsStack", { screen: "Home" });
           } catch (error) {
@@ -67,62 +51,52 @@ const Login = ({ navigation }: RootStackScreenProps<"Login">) => {
       }
     );
   };
-  //   const handleLogin = () =>
-  // {
-  //   navigation.navigate('TabsStack', { screen: 'Home' });
-  // }
 
   const handleSignUp = () => {
-    navigation.navigate("signUp"); // Ensure "SignUp" is a registered route in your navigation stack
+    navigation.navigate("signUp");
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-  <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-    
-
-    <View style={styles.content}>
-      <Text style={styles.welcomeText}>Welcome To ShopSphere</Text>
-
-      <Text style={styles.headingText}>
-        Discover  {"\n"}
-        <Text style={styles.highlightText}>Your Inner Desire</Text>
-      </Text>
-
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        placeholderTextColor="#A0A0A0"
-        value={username}
-        onChangeText={setUsername}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        placeholderTextColor="#A0A0A0"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-
-      <TouchableOpacity onPress={handleLogin} style={styles.button}>
-        <View style={styles.buttonContent}>
-          <Text style={styles.buttonText}>Login</Text>
-        </View>
-      </TouchableOpacity>
-
-      
-
-     
-
-      <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
-        <Text style={styles.signUpText}>Don't have an account? Sign Up</Text>
-      </TouchableOpacity>
-    </View>
-  </ScrollView>
-</SafeAreaView>
-
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <View style={styles.content}>
+            <Image source={logo} style={styles.logo} />
+            <Text style={styles.welcomeText}>Welcome To ShopSphere</Text>
+            <Text style={styles.headingText}>
+              Discover {"\n"}
+              <Text style={styles.highlightText}>Your Inner Desire</Text>
+            </Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Username"
+              placeholderTextColor="#A0A0A0"
+              value={username}
+              onChangeText={setUsername}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              placeholderTextColor="#A0A0A0"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+            <TouchableOpacity onPress={handleLogin} style={styles.button}>
+              <View style={styles.buttonContent}>
+                <Text style={styles.buttonText}>Login</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
+              <Text style={styles.signUpText}>Don't have an account? Sign Up</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
@@ -130,35 +104,37 @@ const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: "white",
     flex: 1,
-    paddingVertical: 80
+    paddingVertical: 60,
   },
-  scrollView: {
-    height: "100%",
-  },
-  image: {
-    width: "100%",
-    height: "66.66%", // 4/6 of the screen height
+  keyboardAvoidingView: {
+    flex: 1,
   },
   content: {
-    paddingHorizontal: 40, // equivalent to Tailwind's px-10
+    paddingHorizontal: 40,
+    alignItems: "center", // Center the content horizontally
+  },
+  logo: {
+    width: 150, // Adjust the width as needed
+    height: 150, // Adjust the height as needed
+    marginBottom: 5, // Space between the logo and the welcome text
   },
   welcomeText: {
-    fontSize: 16, // text-base
+    fontSize: 16,
     textAlign: "center",
     textTransform: "uppercase",
-    fontFamily: "Rubik", // Replace with your font file configuration
-    color: "#A0A0A0", // Tailwind's text-black-200
+    fontFamily: "Rubik",
+    color: "#A0A0A0",
   },
   headingText: {
-    fontSize: 24, // text-3xl
-    fontFamily: "Rubik-Bold", // Replace with your bold font configuration
-    color: "#505050", // Tailwind's text-black-300
+    fontSize: 24,
+    fontFamily: "Rubik-Bold",
+    color: "#505050",
     textAlign: "center",
-    marginTop: 8, // mt-2
+    marginTop: 8,
   },
   highlightText: {
     color: "black",
-    fontWeight: "800" // Tailwind's text-primary-300
+    fontWeight: "800",
   },
   input: {
     borderWidth: 1,
@@ -167,16 +143,17 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     fontSize: 16,
-    fontFamily: "Rubik", // Regular font
+    fontFamily: "Rubik",
     color: "#505050",
     marginTop: 16,
+    width: "100%", // Ensure the input fields take full width
   },
   button: {
-    backgroundColor: "black", // Tailwind's text-primary-300
+    backgroundColor: "black",
     borderRadius: 8,
     width: "100%",
-    paddingVertical: 16, // py-4
-    marginTop: 20, // mt-5
+    paddingVertical: 16,
+    marginTop: 20,
   },
   buttonContent: {
     flexDirection: "row",
@@ -185,36 +162,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   buttonText: {
-    fontSize: 18, // text-lg
-    fontFamily: "Rubik-Medium", // Medium font
-    color: "white",
-  },
-  orText: {
-    fontSize: 16,
-    fontFamily: "Rubik",
-    color: "#A0A0A0",
-    textAlign: "center",
-    marginVertical: 16,
-  },
-  googleButton: {
-    backgroundColor: "white",
-    shadowColor: "#A0A0A0", // Tailwind's shadow-zinc-300
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 4,
-    borderRadius: 8,
-    width: "100%",
-    paddingVertical: 16,
-  },
-  googleIcon: {
-    width: 20, // w-5
-    height: 20, // h-5
-  },
-  googleButtonText: {
     fontSize: 18,
     fontFamily: "Rubik-Medium",
-    color: "#505050",
-    marginLeft: 8,
+    color: "white",
   },
   signUpButton: {
     marginTop: 16,
@@ -225,7 +175,6 @@ const styles = StyleSheet.create({
     fontFamily: "Rubik",
     color: "black",
     fontWeight: "800",
-
   },
 });
 

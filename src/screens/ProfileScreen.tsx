@@ -23,8 +23,7 @@ import { RootStackScreenProps } from "../navigators/RootNavigator";
 import { TabsStackScreenProps } from "../navigators/TabsNavigator";
 import { useTheme } from "@react-navigation/native";
 
-const avatar = "https://images.unsplash.com/photo-1521577352947-9bb58764b69a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=986&q=80"
-
+const avatar = "https://instagram.fdac12-1.fna.fbcdn.net/v/t51.2885-19/471905802_565543123116499_7645982300228500794_n.jpg?stp=dst-jpg_s320x320_tt6&_nc_ht=instagram.fdac12-1.fna.fbcdn.net&_nc_cat=107&_nc_ohc=uu5Ic6ixsjoQ7kNvgERgJJE&_nc_gid=86480d39b04c49bc9aee40260f735330&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AYAQJSUUfr7zw5ak2ZzOqD-xFWrRKA21UFyC-aYG2UbpMg&oe=679FBC09&_nc_sid=8b3546"
 interface SettingsItemProp {
   icon?: ImageSourcePropType;
   title: string;

@@ -1,16 +1,22 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Image, StyleSheet, Animated } from 'react-native';
 import { RootStackScreenProps } from '../navigators/RootNavigator';
 import { useAuthStore } from '../store/auth/useAuthStore';
 
-const avatar = "/home/fayek/android_app/ecommerce_app/src/assets/image.png";
+const avatar = "/home/fayek/ecommerce_app/src/assets/image2.png";
 
 const SplashScreen = ({ navigation }: RootStackScreenProps<"Splash">) => {
   const fadeAnim = new Animated.Value(0); // For fade-in effect
   const { isAuthenticated } = useAuthStore();
+  const [hasShownSplash, setHasShownSplash] = useState(false); // Splash control state
 
   useEffect(() => {
-    // Fade in animation
+    if (hasShownSplash) {
+      navigateToNextScreen();
+      return;
+    }
+
+    // Show Splash with Fade-in Animation
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 1500,
@@ -18,20 +24,25 @@ const SplashScreen = ({ navigation }: RootStackScreenProps<"Splash">) => {
     }).start();
 
     const timer = setTimeout(() => {
-      if (isAuthenticated) {
-        navigation.replace("TabsStack", { screen: "Home" });
-      } else {
-        navigation.replace("onBoarding");
-      }
-    }, 3000);
+      setHasShownSplash(true);
+      navigateToNextScreen();
+    }, 3000); // 3 seconds splash duration
 
     return () => clearTimeout(timer);
   }, [navigation, isAuthenticated]);
 
+  const navigateToNextScreen = () => {
+    if (isAuthenticated) {
+      navigation.replace("TabsStack", { screen: "Home" });
+    } else {
+      navigation.replace("onBoarding");
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Animated.Image
-        source={ require(avatar) }
+        source={require(avatar)}
         style={[styles.logo, { opacity: fadeAnim }]}
       />
     </View>
@@ -43,7 +54,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'black',
+    backgroundColor: '#f5f5f5',
   },
   logo: {
     width: 200,

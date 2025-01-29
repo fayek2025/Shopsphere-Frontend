@@ -40,35 +40,7 @@ const CartScreen = ({ navigation   }: RootStackScreenProps<'CartScreen'>) => {
   }, [carts]);
   
   // Example cart items data with quantity
-  const [cartData, setCartData] = useState([
-    {
-      id: '1',
-      imageUri:
-        'https://plus.unsplash.com/premium_photo-1664392147011-2a720f214e01?q=80&w=2078&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      title: 'Product Title 1',
-      description: 'Product Description 1',
-      price: 100,
-      quantity: 1,
-    },
-    {
-      id: '2',
-      imageUri:
-        'https://plus.unsplash.com/premium_photo-1664392147011-2a720f214e01?q=80&w=2078&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      title: 'Product Title 2',
-      description: 'Product Description 2',
-      price: 150,
-      quantity: 1,
-    },
-    {
-      id: '3',
-      imageUri:
-        'https://plus.unsplash.com/premium_photo-1664392147011-2a720f214e01?q=80&w=2078&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      title: 'Product Title 3',
-      description: 'Product Description 3',
-      price: 200,
-      quantity: 1,
-    },
-  ]);
+  
 
   // Calculate total price dynamically
   const totalPrice = useMemo(() => {
@@ -185,7 +157,7 @@ const CartScreen = ({ navigation   }: RootStackScreenProps<'CartScreen'>) => {
             id={item.id}
             imageUri={cartItem.product?.thumbnail} 
             title={cartItem.product?.title} 
-            description={cartItem.product?.description} 
+            
             price={cartItem.product?.price} 
             quantity={cartItem.quantity} 
             onIncrement={() => handleIncrement(item.id , cartItem.product?.product_id , cartItem.quantity)} 

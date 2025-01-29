@@ -7,7 +7,7 @@ type CartItemsProps = {
   id: number;
   imageUri: string;
   title: string;
-  description: string;
+  description?: string;
   price: number;
   quantity: number;
   onIncrement: () => void;
@@ -27,13 +27,12 @@ const CartItems = ({
   onRemove,
 }: CartItemsProps) => {
   const { colors } = useTheme();
-  const totalPrice = (price * (quantity)).toFixed(2);
+  const totalPrice = (price * quantity).toFixed(2);
 
   return (
     <View
       style={{
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
         padding: 16,
         borderRadius: 16,
@@ -51,19 +50,22 @@ const CartItems = ({
         source={{ uri: imageUri }}
         style={{
           width: 100,
-          aspectRatio: 1,
+          height: 100,
           borderRadius: 16,
         }}
         resizeMode="cover"
       />
 
       {/* Product Details */}
-      <View style={{ marginHorizontal: 16, flex: 1 }}>
-        <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text }}>
-          {title} {id}
-          
+      <View style={{ marginLeft: 16, flex: 1 }}>
+        <Text style={{ fontSize: 12, fontWeight: '400', color: colors.text , paddingBottom: 5 }}>
+          {title}
         </Text>
-        <Text style={{ fontSize: 14, color: 'gray' }}>{description}</Text>
+        {description && (
+          <Text style={{ fontSize: 14, color: 'gray', marginVertical: 4 }}>
+            {description}
+          </Text>
+        )}
         <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text }}>
           ${totalPrice}
         </Text>
@@ -72,22 +74,23 @@ const CartItems = ({
       {/* Action Buttons */}
       <View style={{ alignItems: 'center' }}>
         {/* Remove Button */}
-        <TouchableOpacity
-          onPress={onRemove}
-          style={{
-            marginBottom: 16,
-            alignSelf: 'flex-end',
-          }}
-        >
-          <Icons name="delete" size={24} color={colors.text} />
-        </TouchableOpacity>
+        {onRemove && (
+          <TouchableOpacity
+            onPress={onRemove}
+            style={{
+              marginBottom: 16,
+              alignSelf: 'flex-end',
+            }}
+          >
+            <Icons name="delete" size={24} color={colors.text} />
+          </TouchableOpacity>
+        )}
 
         {/* Quantity Controls */}
         <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
-            gap: 6,
           }}
         >
           {/* Decrement Button */}
@@ -96,10 +99,10 @@ const CartItems = ({
             style={{
               backgroundColor: colors.background,
               width: 34,
-              aspectRatio: 1,
+              height: 34,
               alignItems: 'center',
               justifyContent: 'center',
-              borderRadius: 34,
+              borderRadius: 17,
               borderWidth: 1,
               borderColor: colors.text,
             }}
@@ -113,6 +116,7 @@ const CartItems = ({
               fontWeight: '600',
               fontSize: 16,
               color: colors.text,
+              marginHorizontal: 8,
             }}
           >
             {quantity}
@@ -124,10 +128,10 @@ const CartItems = ({
             style={{
               backgroundColor: colors.primary,
               width: 34,
-              aspectRatio: 1,
+              height: 34,
               alignItems: 'center',
               justifyContent: 'center',
-              borderRadius: 34,
+              borderRadius: 17,
             }}
           >
             <Icons name="add" size={20} color="#fff" />

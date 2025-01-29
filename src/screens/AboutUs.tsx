@@ -9,7 +9,6 @@ const AboutUs = () => {
   const teamMembers = [
     { name: 'Nahin Ehsan Nilav', roll: '31', email: 'ehsannilav@gmail.com', image: 'https://scontent-sin11-1.cdninstagram.com/v/t51.2885-19/472168774_990457619579254_3804829550344607006_n.jpg?_nc_ht=scontent-sin11-1.cdninstagram.com&_nc_cat=110&_nc_ohc=-xlI3sKzjIUQ7kNvgHnIgBE&_nc_gid=a805476d48f3424d9533d14094dffe6d&edm=AP4sbd4BAAAA&ccb=7-5&oh=00_AYBe961rrZnQLhikyAN8yX-UCtoEuM0vcwURqL1tl_ULBw&oe=679FBD33&_nc_sid=7a9f4b' },
     { name: 'Fayek Ahmed Rahat', roll: '57', email: 'fayekahmedrahat90@gmail.com', image: 'https://instagram.fdac12-1.fna.fbcdn.net/v/t51.2885-19/471905802_565543123116499_7645982300228500794_n.jpg?stp=dst-jpg_s320x320_tt6&_nc_ht=instagram.fdac12-1.fna.fbcdn.net&_nc_cat=107&_nc_ohc=uu5Ic6ixsjoQ7kNvgERgJJE&_nc_gid=86480d39b04c49bc9aee40260f735330&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AYAQJSUUfr7zw5ak2ZzOqD-xFWrRKA21UFyC-aYG2UbpMg&oe=679FBC09&_nc_sid=8b3546' },
-    
   ];
 
   return (
@@ -35,8 +34,8 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: '#f9f9f9',
-    justifyContent:'center',
-    alignItems : 'center'
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   header: {
     fontSize: 28,
@@ -46,8 +45,9 @@ const styles = StyleSheet.create({
     color: '#37474f',
   },
   card: {
+    width: 350, // Fixed width for all cards
     alignItems: 'center',
-    padding: 15,
+    padding: 10,
     backgroundColor: '#ffffff',
     borderRadius: 12,
     marginBottom: 15,
@@ -72,7 +72,6 @@ const styles = StyleSheet.create({
   email: {
     fontSize: 16,
     color: 'red',
-    
     fontWeight: '800',
   },
 });

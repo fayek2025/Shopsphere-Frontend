@@ -39,7 +39,7 @@ const ConfirmScreen = ({
       Alert.alert("Success", "Order placed successfully!", [
         {
           text: "OK",
-          onPress: () => navigation.navigate("OrderSuccessScreen"), // Navigate to success screen
+          onPress: () => navigation.navigate("TabsStack", { screen: "Home" }), // Navigate to success screen
         },
       ]);
     } catch (error: any) {
