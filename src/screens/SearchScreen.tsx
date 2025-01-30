@@ -16,6 +16,8 @@ import * as ImagePicker from "expo-image-picker";
 import { useSearchProductsByText, useSearchProductsByImage } from "../api";
 import Icons from '@expo/vector-icons/MaterialIcons';
 import { RootStackScreenProps } from "../navigators/RootNavigator";
+import ProductListItem from "../components/ProductListItem";
+import ProductListItemSearch from "../components/ProductListItemSearch";
 
 interface Product {
   id: number;
@@ -78,7 +80,7 @@ const SearchScreen = ({navigation} : RootStackScreenProps<"SearchScreen"> ) => {
         title: item.title
       })}
     >
-      <Image source={{ uri: item.thumbnail }} style={styles.productImage} resizeMode="cover" />
+      <Image source={{ uri: item.thumbnail }} style={styles.productImage} resizeMode="contain" />
       <Text style={styles.productTitle}>{item.title}</Text>
       <Text style={styles.productDescription}>{item.description}</Text>
       <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
@@ -135,19 +137,21 @@ const SearchScreen = ({navigation} : RootStackScreenProps<"SearchScreen"> ) => {
         )}
 
         {(textSearchMutation.isSuccess || imageSearchMutation.isSuccess) && (
-          <FlatList
-            data={textSearchMutation.data?.data || imageSearchMutation.data?.data}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderProduct}
-            style={styles.productList}
-            contentContainerStyle={styles.productListContent}
-            showsVerticalScrollIndicator={false}
-            ListEmptyComponent={
-              <Text style={styles.noResultsText}>
-                No products found
-              </Text>
-            }
-          />
+          // <FlatList
+          //   data={textSearchMutation.data?.data || imageSearchMutation.data?.data}
+          //   keyExtractor={(item) => item.id.toString()}
+          //   renderItem={renderProduct}
+          //   style={styles.productList}
+          //   contentContainerStyle={styles.productListContent}
+          //   showsVerticalScrollIndicator={false}
+          //   ListEmptyComponent={
+          //     <Text style={styles.noResultsText}>
+          //       No products found
+          //     </Text>
+          //   }
+          // />
+
+          <ProductListItemSearch data={textSearchMutation.data?.data || imageSearchMutation.data?.data} navigation={navigation} />
         )}
       </View>
     </TouchableWithoutFeedback>
@@ -266,7 +270,7 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#007BFF",
+    color: "black",
   },
   noResultsText: {
     textAlign: "center",

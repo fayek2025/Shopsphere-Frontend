@@ -8,8 +8,8 @@ import { RootStackScreenProps } from "../navigators/RootNavigator";
 
 const AVATAR_URL = "https://plus.unsplash.com/premium_photo-1671641797851-0e11e9271439?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
 
-const avatar = "/home/fayek/ecommerce_app/src/assets/onboarding.png"
-const logo = "/home/fayek/ecommerce_app/src/assets/image-removebg.png"
+const avatar = "/home/fayek/android_app/ecommerce_app/src/assets/onboarding.png"
+const logo = "/home/fayek/android_app/ecommerce_app/src/assets/image-removebg.png";
 
 const OnboardingScreen = ({navigation} : RootStackScreenProps<"onBoarding">) => {
 

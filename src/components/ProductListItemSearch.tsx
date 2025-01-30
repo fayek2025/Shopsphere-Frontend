@@ -7,7 +7,7 @@ import Icons from '@expo/vector-icons/MaterialIcons';
 import { useCreateWishlist } from '../api';
 import { useEffect } from 'react';
 
-type ProductListItemProps = { 
+type ProductListItemSearchProps = { 
     navigation?: any;
     handleFavourite?: (id: number) => void;
     data?: any[];
@@ -22,7 +22,7 @@ type Product = {
     price: number;
   };
 
-const ProductListItem = ({ navigation, data }: ProductListItemProps) => {
+const ProductListItemSearch = ({ navigation, data }: ProductListItemSearchProps) => {
     const createWishlistMutation = useCreateWishlist();
     const { colors } = useTheme();
     const { favorites, toggleFavorite } = useFavoriteStore();
@@ -91,7 +91,7 @@ const ProductListItem = ({ navigation, data }: ProductListItemProps) => {
                         </Text>
                     </View>
 
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                             style={{
                                 position: 'absolute',
                                 top: 10,
@@ -107,7 +107,7 @@ const ProductListItem = ({ navigation, data }: ProductListItemProps) => {
                                 size={24}
                                 color={isFavorited ? "red" : "black"}
                             />
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
 
                     
                 </TouchableOpacity>
@@ -168,4 +168,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ProductListItem;
+export default ProductListItemSearch;

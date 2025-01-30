@@ -71,12 +71,12 @@ const RecomendedProductListItem = ({ navigation, data }: RecomendedProductListIt
                     }
                 >
                     {/* Image Section */}
-                    {/* <Image
+                    <Image
                         source={{ uri: item.thumbnail }}
                         style={[ styles.productImage]}
                         resizeMode="cover"
                         loading = "eager"
-                    /> */}
+                    />
 
                     {/* Text Content Section */}
                     <View style={styles.textContent}>

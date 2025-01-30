@@ -1,46 +1,51 @@
-import React, { useEffect, useState } from 'react';
-import { View, Image, StyleSheet, Animated } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Animated, StyleSheet } from 'react-native';
 import { RootStackScreenProps } from '../navigators/RootNavigator';
 import { useAuthStore } from '../store/auth/useAuthStore';
+import useSplashStore from '../store/useSplashStore';
 
-const avatar = "/home/fayek/ecommerce_app/src/assets/image2.png";
+const avatar = "/home/fayek/android_app/ecommerce_app/src/assets/image2.png";
 
-const SplashScreen = ({ navigation }: RootStackScreenProps<"Splash">) => {
-  const fadeAnim = new Animated.Value(0.5); // Start with a higher initial opacity
-  const { isAuthenticated , loggedOut } = useAuthStore();
-  const [hasShownSplash, setHasShownSplash] = useState(false); // Splash control state
+const SplashScreen: React.FC<RootStackScreenProps<"Splash">> = ({ navigation }) => {
+  const fadeAnim = new Animated.Value(0.8); // Start with a higher initial opacity
+  const { isAuthenticated, loggedOut } = useAuthStore();
+  const { hasShownSplash, checkSplashShown, setSplashShown } = useSplashStore();
 
   useEffect(() => {
-    if (hasShownSplash) {
-      navigateToNextScreen();
-      return;
-    }
+    const initializeSplash = async () => {
+      await checkSplashShown();
+      if (hasShownSplash) {
+        navigateToNextScreen();
+      } else {
+        showSplash();
+      }
+    };
 
+    initializeSplash();
+  }, []); // Removed dependencies to ensure it runs only once on mount
+
+  const showSplash = () => {
     // Show Splash with Fade-in Animation
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 1500,
+      duration: 1000,
       useNativeDriver: true,
     }).start();
 
-    const timer = setTimeout(() => {
-      setHasShownSplash(true);
+    const timer = setTimeout(async () => {
+      await setSplashShown();
       navigateToNextScreen();
-    }, 3000); // 3 seconds splash duration
+    }, 3000); // 8 seconds splash duration
 
     return () => clearTimeout(timer);
-  }, [navigation, isAuthenticated]);
+  };
 
   const navigateToNextScreen = () => {
     if (isAuthenticated) {
       navigation.replace("TabsStack", { screen: "Home" });
     } else if (loggedOut) {
       navigation.replace("Login");
-    }
-    
-    
-    
-    else {
+    } else {
       navigation.replace("onBoarding");
     }
   };

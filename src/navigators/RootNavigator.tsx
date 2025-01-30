@@ -19,6 +19,7 @@ import Transaction from '../screens/Transaction'
 import SearchScreen from '../screens/SearchScreen'
 import AboutUs from '../screens/AboutUs'
 import SplashScreen from '../screens/SplashScreen'
+import useSplashStore from '../store/useSplashStore'
 
 export type RootStackParamList = {
   Splash : undefined;
@@ -67,12 +68,16 @@ export type RootStackScreenProps <T extends keyof RootStackParamList> = NativeSt
 
 const RootNavigator = () => {
   const { isAuthenticated } = useAuthStore();
+  const { hasShownSplash } = useSplashStore();
 
   return (
+
     <RootStack.Navigator screenOptions={{ headerShown: false }}>
-      <RootStack.Screen name="Splash" component={SplashScreen} />
+      
+      
       {!isAuthenticated ? (
         <>
+          <RootStack.Screen name="Splash" component={SplashScreen} />
           <RootStack.Screen name="onBoarding" component={OnboardingScreen} />
           <RootStack.Screen name="Login" component={Login} />
           <RootStack.Screen name="signUp" component={signUp} />

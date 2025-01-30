@@ -147,6 +147,7 @@ const SwipeScreen: React.FC<SwipeScreenProps> = () => {
           cardIndex={0}
           backgroundColor={"#f5f5f5"}
           stackSize={3}
+          verticalSwipe={false} // Disable vertical swipe
           overlayLabels={{
             left: {
               title: "NOPE",

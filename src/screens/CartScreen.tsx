@@ -118,7 +118,7 @@ const CartScreen = ({ navigation   }: RootStackScreenProps<'CartScreen'>) => {
     const newQuantity = currentQuantity - 1;
     console.log("productId", productId);
     console.log("cartId", cartId);
-  
+    
     if (newQuantity <= 0) {
       Alert.alert('Error', 'Quantity must be at least 1.');
       return;

@@ -6,7 +6,7 @@ import { useLogin } from "../api";
 import { useAuthStore } from "../store/auth/useAuthStore";
 
 // Assuming the logo is a local file, you can import it like this:
-const logo = require("../assets/image-removebg.png"); // Adjust the path as necessary
+const logo = require("/home/fayek/android_app/ecommerce_app/src/assets/image-removebg.png"); // Adjust the path as necessary
 
 const Login = ({ navigation }: RootStackScreenProps<"Login">) => {
   const [username, setUsername] = useState('');

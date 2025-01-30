@@ -14,7 +14,7 @@ import { useUpdateUserProfile } from "../api";
 import { UserProfileUpdate } from "../entities/Todo";
 
 // Assuming the logo is a local file, you can import it like this:
-const logo = require("/home/fayek/ecommerce_app/src/assets/image-removebg.png"); // Adjust the path as necessary
+const logo = require("/home/fayek/android_app/ecommerce_app/src/assets/image-removebg.png"); // Adjust the path as necessary
 
 const EditProfile = ({ navigation, route: { params: { name: routeName, email: routeEmail, username: routeUsername } } }: RootStackScreenProps<"EditProfile">) => {
   const [name, setName] = useState(routeName || "");
